@@ -420,3 +420,26 @@ document.addEventListener("DOMContentLoaded",()=>{
   }
 });
 
+/* Contact form: build Formspree email subject as "<Topic> - <Subject>" */
+(function(){
+  const form = document.querySelector("form.contact-form-card");
+  if(!form) return;
+
+  const topic = form.querySelector("#topic");
+  const subject = form.querySelector("#subject");
+  const hiddenSubject = form.querySelector("#_subject");
+
+  form.addEventListener("submit", function(){
+    if(!hiddenSubject) return;
+
+    const topicText = topic && topic.options && topic.selectedIndex >= 0
+      ? (topic.options[topic.selectedIndex].text || "").trim()
+      : "";
+
+    const subjectText = subject ? (subject.value || "").trim() : "";
+
+    const combined = [topicText, subjectText].filter(Boolean).join(" - ");
+    hiddenSubject.value = combined || "Website enquiry";
+  });
+})();
+

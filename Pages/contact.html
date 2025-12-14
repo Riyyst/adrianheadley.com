@@ -101,7 +101,8 @@
                 <div class="form-row">
                     <div class="form-field">
                         <label for="topic">What’s this about?</label>
-                        <select id="topic" name="topic">
+                        <select id="topic" name="topic" required>
+                            <option value="" disabled selected>Select an option</option>
                             <option value="general">General hello</option>
                             <option value="professional">Professional opportunity</option>
                             <option value="business">Business / operations</option>
@@ -114,6 +115,7 @@
                     <div class="form-field">
                         <label for="subject">Subject</label>
                         <input id="subject" name="subject" type="text" />
+                        <input type="hidden" id="_subject" name="_subject" />
                     </div>
                 </div>
                 <div class="form-field">
