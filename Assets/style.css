@@ -465,3 +465,16 @@ body.dark-theme .footer-social-link,body.high-contrast .footer-social-link{borde
   overflow-y: auto;
   margin-top: 0.8rem;
 }
+
+
+
+
+/* Professional page: center the CV button across the full viewport line */
+.cv-cta-wrapper {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding: 2rem 1.25rem 1rem;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+}
