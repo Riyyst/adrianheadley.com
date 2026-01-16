@@ -45,6 +45,254 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../Assets/style.css" />
+
+<style>
+/* --- Badge rail (built-in right column) --- */
+
+/* Two-column layout (content + badge rail) that feels native (no overlay) */
+.page-wrapper {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 14.75rem;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        "header header"
+        "main rail"
+        "footer footer";
+    column-gap: 1.5rem;
+}
+
+.site-header,
+.site-footer {
+    grid-column: 1 / -1;
+}
+
+.site-header { grid-area: header; }
+.site-footer { grid-area: footer; }
+
+#main-professional {
+    grid-column: 1;
+    grid-area: main;
+}
+
+.badge-rail {
+    grid-column: 2;
+    grid-area: rail;
+    align-self: start;
+    position: sticky;
+    top: 6.25rem;
+    height: calc(100vh - 8.25rem);
+    width: 100%;
+    /* Keep the rail underneath the footer so it never sits *on top* of it */
+    z-index: 1;
+}
+
+/* Make sure the footer always renders above the badge rail (so the rail appears behind it). */
+.site-footer {
+    position: relative;
+    z-index: 10;
+    /* Match the page background so content behind doesn't show through */
+    background: var(--page-bg, #f5f6f8);
+}
+
+/* No background panel – looks built in */
+.badge-rail__panel {
+    height: 100%;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.badge-rail__arrow {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    width: 100%;
+    padding: 0.25rem 0;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    opacity: 0.7;
+    transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.badge-rail__arrow:hover,
+.badge-rail__arrow:focus-visible {
+    opacity: 1;
+    transform: translateY(-1px);
+}
+
+.badge-rail__scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.25rem 0 0.5rem;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.badge-rail__scroll::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+.badge-rail__h {
+    margin: 0.85rem 0 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    text-align: center;
+}
+
+
+.badge-rail__group {
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.badge-rail__group:last-child {
+    border-bottom: 0;
+}
+
+.badge-rail__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+    justify-items: center;
+}
+
+
+/* Bigger badges, no label text. The badge image *is* the label. */
+.badge-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 0.25rem;
+    border-radius: 14px;
+    border: 0;
+    background: transparent;
+    transition: transform 160ms ease, filter 160ms ease;
+}
+
+.badge-link:hover,
+.badge-link:focus-visible {
+    transform: translateY(-2px) scale(1.04);
+    filter: drop-shadow(0 14px 24px rgba(0,0,0,0.45));
+}
+
+.badge-link img {
+    width: 92px;
+    height: 92px;
+    object-fit: contain;
+    border-radius: 16px;
+}
+
+/* --- Small screens (tablets/phones) ---
+   Put the badges underneath the CV button and make them scroll left-to-right.
+   This avoids squeezing the main timeline on narrow widths.
+*/
+.badge-rail.is-horizontal {
+    position: static;
+    top: auto;
+    height: auto;
+    width: 100%;
+    margin-top: 1.25rem;
+}
+
+.badge-rail.is-horizontal .badge-rail__panel {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.5rem;
+}
+
+.badge-rail.is-horizontal .badge-rail__arrow {
+    width: auto;
+    padding: 0.25rem 0.6rem;
+    align-self: center;
+}
+
+.badge-rail.is-horizontal .badge-rail__scroll {
+    flex: 1;
+    min-width: 0; /* critical: prevent the flex child from forcing page-wide overflow */
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    gap: 0.9rem;
+    padding: 0.5rem 0.25rem;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    /* Make horizontal swipes scroll the badge bar (not the page). */
+    touch-action: pan-x;
+    overscroll-behavior-x: contain;
+}
+
+.badge-rail.is-horizontal .badge-rail__group {
+    border-bottom: 0;
+    border-right: 1px solid rgba(0,0,0,0.06);
+    padding: 0 0.85rem;
+    min-width: 16.5rem;
+}
+
+.badge-rail.is-horizontal .badge-rail__group:last-child {
+    border-right: 0;
+}
+
+.badge-rail.is-horizontal .badge-rail__grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0.6rem;
+    justify-content: flex-start;
+}
+
+.badge-rail.is-horizontal .badge-rail__h {
+    margin: 0.25rem 0 0.55rem;
+    text-align: center;
+}
+
+@media (max-width: 1024px) {
+    body { overflow-x: hidden; }
+
+    .page-wrapper {
+        /* On small screens, revert to normal document flow to avoid layout quirks */
+        display: block;
+    }
+
+    /*
+      On small screens the rail is moved into <main> by JS.
+      Until that happens, hide it so it doesn't get auto-placed by the grid
+      (which creates large blank space and can upset header/footer layout).
+    */
+    .badge-rail { display: none; }
+    .badge-rail.is-horizontal { display: block; }
+
+    .badge-link img { width: 72px; height: 72px; }
+
+    /* Mobile/tablet: show ONLY the badges (no headings/dividers) in one continuous swipe row */
+    .badge-rail.is-horizontal .badge-rail__h { display: none; }
+    .badge-rail.is-horizontal .badge-rail__group { display: contents; }
+    .badge-rail.is-horizontal .badge-rail__grid { display: contents; }
+    .badge-rail.is-horizontal .badge-rail__scroll {
+        gap: 0.75rem;
+        padding: 0.5rem 0.25rem;
+    }
+    .badge-rail.is-horizontal .badge-link { margin-right: 0.75rem; }
+    .badge-rail.is-horizontal .badge-link:last-child { margin-right: 0; }
+}
+
+@media (max-width: 560px) {
+    .badge-link img { width: 64px; height: 64px; }
+}
+</style>
+
 </head>
 <body data-in-pages="true">
     <a class="skip-link" href="#main-professional">Skip to main content</a>
@@ -120,10 +368,132 @@
             </div>
         </header>
 
+        <aside class="badge-rail" aria-label="Badges">
+            <div class="badge-rail__panel">
+                <button type="button" class="badge-rail__arrow" id="badgeUp" aria-label="Scroll badges up">▲</button>
+                <div class="badge-rail__scroll" id="badgeScroll" tabindex="0" aria-label="Scrollable badges">
+                    <div class="badge-rail__group">
+<div class="badge-rail__h">Career path</div>
+                        <div class="badge-rail__grid">
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/9a9984fcb980c69b8a0f57002527e093" target="_blank" rel="noopener noreferrer" aria-label="Cyber Fundamentals (Immersive Labs)" title="Cyber Fundamentals">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/4110fbebb871ea8edd0e359fb2a6cec7/cyber_badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T172555Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=eeff721624b863c7f0788487b76df6c0f1de17d49d0f65f353de762992b534ac" alt="Cyber Fundamentals badge" loading="lazy" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="badge-rail__group">
+                        <div class="badge-rail__h">Cyber Fundamentals</div>
+                        <div class="badge-rail__grid">
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/83f12de29f7aa68a3083634e1df184c5" target="_blank" rel="noopener noreferrer" title="Introduction to Networking">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/562cd2d7cf0d0890c22dca7058230ba5/Intro_to_networking_Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T085159Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=a3e03d8bc169f1dac634575b937964ee6a8327d56f9ffa07efdb0e6af7dea6f0" alt="Introduction to Networking badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/372653ccecbe6896a0d77b9d565a29b1" target="_blank" rel="noopener noreferrer" title="Linux Command Line">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/8a91291275a97e24e750f2244b8df4b6/Linux_command_line_Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084744Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=efc8b96575cbe34576edf39402bf4a5ca6598123d16c5dd5690b235c1c121caa" alt="Linux Command Line badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7522b5139ab50436767e65741a8f3046" target="_blank" rel="noopener noreferrer" title="Introduction to Digital Forensics">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/8168261905cc5bdcc89b975ca7661406/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084826Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=df6c4b6a4696f9124c4b439fd9249c678e93cfca80098e0cf810b9ef3f38500b" alt="Introduction to Digital Forensics badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/536cdaf0b57b6e49e179a053735ed840" target="_blank" rel="noopener noreferrer" title="Introduction to Cryptography">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/633f9be7ff0bcc2139ff214ad0f987fb/Intro_to_Cryptography_Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T085105Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=1b3015e2f6fe81270ac0355afa4765aa6e9e4a5493bae92471a3020781f04160" alt="Introduction to Cryptography badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/45aaa7471f435dfd95c8ef9066dee950" target="_blank" rel="noopener noreferrer" title="Modern Encryption">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/ef1cd83a37bc289d1d8da49efa770542/modern_encryption_Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T135320Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=c9343e3265542dc8ecca1f802c8535e9014c74d320caa47af7820689db31f0d5" alt="Modern Encryption badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/45d8dec9e55ba98bb13fe7f7fe663f5f" target="_blank" rel="noopener noreferrer" title="Secure Fundamentals">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/d2152dbee44a35013cf3cd6f3d04c7a4/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T085130Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b581f6c43207050c9c3f902f44d2daf79f865c4b075b61f82ef93e6533816772" alt="Secure Fundamentals badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/9441a9f06bb059ba9fd5595617f08916" target="_blank" rel="noopener noreferrer" title="Ethics & Laws">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/c802efd44b077b88f89d0bd63b7bc294/ethics_Laws_Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T085044Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=62210d0b6e04cd0b73dbffae44111378b5b295fe02014077f09ccd6addbc0c13" alt="Ethics & Laws badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/5f0d4eb1ca83f62c3ed90dea4cb8fad3" target="_blank" rel="noopener noreferrer" title="Encoding">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/9677d30110faed5002b864476aef9322/encoding_Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084851Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=76f2a4b1d14ca0d68a5ec3ba959ffee542fc9eb1ced421d4d07ffb0ff856ba79" alt="Encoding badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7b581168f3c080125f31055fab8511c4" target="_blank" rel="noopener noreferrer" title="Cyber 101">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/7877e7401180388181307f23a52d0b38/cyber_101_Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084542Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b46bdbb8571a7e5dc65da675bd04b8bf0fc07060b51b0b7f6e7e4312e2ef19bc" alt="Cyber 101 badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7cc9107821f11b85d6f83ea8721bbd49" target="_blank" rel="noopener noreferrer" title="Historic Encryption">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/309cce310076dd85be5ea61a88c60c7f/historic_encryption_Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084805Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=bf6cbb6fe7264149fb03933a56f7c9d89e01387b83618dbb2bab59f30e5b131d" alt="Historic Encryption badge" loading="lazy" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="badge-rail__group">
+                        <div class="badge-rail__h">Awareness</div>
+                        <div class="badge-rail__grid">
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/bf013e1f64677b5139800532ce36c072" target="_blank" rel="noopener noreferrer" title="Social Engineering">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/fee33a86a77e6bef501d7005edcc5b5b/Social_engineering_badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084026Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=223420ade1bbb759db9bd16829a22d87167c571074dc2c7d4b86bacf5230b642" alt="Social Engineering badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/0ce5ca224a103f98d0da28e27d1ad2a4" target="_blank" rel="noopener noreferrer" title="Authentication">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/39320672f32f888835e1fd73a9f16eed/Authentication_Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084248Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0bcd026d139a1e4958a1bcbfd26d8b05fcc3dad035cccc8127db47104bbf4b21" alt="Authentication badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/4593cd88c6196f6e43e6b9794c90dd9f" target="_blank" rel="noopener noreferrer" title="Device Security">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/6068a910c709030793f57500b3769bf1/Badge_device_security.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084146Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=5ea410da1d63fe5ec5027affbe518713f9ac2873aa32cdd6936be5662c0a5c75" alt="Device Security badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7f50104638ad45562d05113331929656" target="_blank" rel="noopener noreferrer" title="Security Reporting and Responsiveness">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/0f8d74d1786fc83c84983a4c9afc5812/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T083902Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f95509c85eddecfe0e697d8352855a3b814313e2205be906bc79a99ed2437043" alt="Security Reporting and Responsiveness badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/af2a5031ff60cb8b8bb797b08841c13e" target="_blank" rel="noopener noreferrer" title="Data Handling">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/7e8609787db12879a528a0a57f767868/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T083927Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=51cc638d9ab24a3e756eb92d7f1a72806c6fc6b13e138198f9bf943b35f631a1" alt="Data Handling badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/4cb946e908e8bd60092b5a6a535a165c" target="_blank" rel="noopener noreferrer" title="Browsing Securely">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/b27dc6cc48d2130258247737e281da85/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084119Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=297c040bd5516a6e5f87d7e63b620b0863163ed6bb657562cb355eb5a5c43a6f" alt="Browsing Securely badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/b67c0eeec0368d2278501c2062c2e481" target="_blank" rel="noopener noreferrer" title="Cyber Safety">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/edb8b04e811934e2745478776b3e06e4/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084319Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=f5dabd66fe43e170827320d8e9ecdbb0c6c46a4b52cf171c1a0c156ef35b7ddc" alt="Cyber Safety badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/df2442a4c275f602ddb08b02130d5022" target="_blank" rel="noopener noreferrer" title="Physical Security">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/87b390de42a60b40c4fbf22f3597f45d/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084210Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=358c2a3e64c99e29d7499ea16eba7dbba7230d8692650beec578b2a84aae1980" alt="Physical Security badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/c5d25af6b1f705c562e25273034e7e4e" target="_blank" rel="noopener noreferrer" title="Digital Footprint">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/f498fb14aab887059b1ee21a7b074350/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084000Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=e7f7f6cc366724ac37231cfa3ebb90a5f65969be04d2ce5f789c0efc968c3964" alt="Digital Footprint badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/6f9770d3d09e180abfa954d2ceba265c" target="_blank" rel="noopener noreferrer" title="Staying Safe Online">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/d0930930eeaec6229d7fe828465a1e81/Staying_Safe_Online_Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084340Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=cb58f91b0df665fdf1262128a322ff508115039c2998be306fcae20895397141" alt="Staying Safe Online badge" loading="lazy" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="badge-rail__group">
+                        <div class="badge-rail__h">Crisis Management</div>
+                        <div class="badge-rail__grid">
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/f0cbe7fccc4f612afbf634ef9fceb0c2" target="_blank" rel="noopener noreferrer" title="Business Impact Analysis">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/a6fcb4f1eff77df8d1dd66a2231501a8/Badge__1_.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T085353Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=00969d4c957c54ae9a299d84a177d29f0b1179377b9bf882fbee10372365d200" alt="Business Impact Analysis badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/79c8bd288895d206a497b29197de42ca" target="_blank" rel="noopener noreferrer" title="Business Continuity 101">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/2a301c6468dce1a8bbc1982105b2929b/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T085450Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=faf78ca825bebc719d25caa5c44f1c3c1dfab08a23b388ceaa9134e6b5112c9c" alt="Business Continuity 101 badge" loading="lazy" />
+                            </a>
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/6b46db5beb36235bcfac65a781752f58" target="_blank" rel="noopener noreferrer" title="Crisis Management 101">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/c0e4103f84660408185a713ec56ce89d/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T085415Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=8536741ccb47686ed1209711437fea0373c9403437b56ea184bf7ba03039c3f6" alt="Crisis Management 101 badge" loading="lazy" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="badge-rail__group">
+                        <div class="badge-rail__h">Management</div>
+                        <div class="badge-rail__grid">
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/2d2421539d07a6ed335c24afdf11af69" target="_blank" rel="noopener noreferrer" title="AI for Business">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/0829976f93c151d9f4021e446974661e/Badge_AI.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T083825Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=4b946b7df4ab27e7e0b5437c46b5aac05d7b458cfdabc45856706df654ac3106" alt="AI for Business badge" loading="lazy" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="badge-rail__group">
+                        <div class="badge-rail__h">Risk &amp; Compliance</div>
+                        <div class="badge-rail__grid">
+                            <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/2e0fded26b333743c286e31399986767" target="_blank" rel="noopener noreferrer" title="Data Privacy">
+                                <img src="https://il-production-eu-west-1-assets.s3.eu-west-1.amazonaws.com/uploads/asset/attachment/cb0d37cedf998e0f1893224e6d280857/Badge.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2DW7IDEPCOGQ4VHY%2F20260116%2Feu-west-1%2Fs3%2Faws4_request&X-Amz-Date=20260116T084403Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fed8479d30aff83ba4e1cb4f9d2e4411ea767ce17bf38ff6eb74bf2ca4821dad" alt="Data Privacy badge" loading="lazy" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="badge-rail__arrow" id="badgeDown" aria-label="Scroll badges down">▼</button>
+            </div>
+        </aside>
+
         <main id="main-professional">
             
             
-<section class="section fade-in-on-scroll">
+<section class="section fade-in-on-scroll visible">
     <header class="section-header">
         
 <!-- Google tag (gtag.js) -->
@@ -136,7 +506,7 @@
 </script>
 
 <h1>Professional &amp; career</h1>
-        <p>Roles, experience, and milestones so far.</p>
+        <p>Roles, experience, and milestones so far. You can also check out the badges I have earned along the way</p>
     </header>
     <div class="timeline" id="career-timeline"></div>
     <div class="cv-cta-wrapper">
@@ -178,5 +548,103 @@
     
 
     <script src="../Assets/script.js"></script>
+
+    <script>
+        (function () {
+            function initBadgeRail() {
+                var rail = document.querySelector('.badge-rail');
+                var scroller = document.getElementById('badgeScroll');
+                var up = document.getElementById('badgeUp');
+                var down = document.getElementById('badgeDown');
+                var cvCta = document.querySelector('.cv-cta-wrapper');
+                if (!rail || !scroller || !up || !down) return;
+
+                // Remember the desktop placement so we can restore it.
+                var desktopParent = rail.parentNode;
+                var desktopNext = rail.nextSibling;
+
+                // On smaller screens, move the rail underneath the CV button and make it horizontal.
+                var mq = window.matchMedia('(max-width: 1024px)');
+
+                function setArrowMode(horizontal) {
+                    if (horizontal) {
+                        up.textContent = '◀';
+                        down.textContent = '▶';
+                        up.setAttribute('aria-label', 'Scroll badges left');
+                        down.setAttribute('aria-label', 'Scroll badges right');
+                    } else {
+                        up.textContent = '▲';
+                        down.textContent = '▼';
+                        up.setAttribute('aria-label', 'Scroll badges up');
+                        down.setAttribute('aria-label', 'Scroll badges down');
+                    }
+                }
+
+                function applyResponsiveRail() {
+                    var horizontal = mq.matches;
+
+                    if (horizontal) {
+                        rail.classList.add('is-horizontal');
+                        setArrowMode(true);
+
+                        // Insert immediately after the CV button wrapper.
+                        if (cvCta && cvCta.parentNode) {
+                            cvCta.parentNode.insertBefore(rail, cvCta.nextSibling);
+                        }
+                    } else {
+                        rail.classList.remove('is-horizontal');
+                        setArrowMode(false);
+
+                        // Restore to original desktop position.
+                        if (desktopParent) {
+                            desktopParent.insertBefore(rail, desktopNext);
+                        }
+                    }
+                }
+
+                function step() {
+                    // Use width when horizontal, height when vertical.
+                    if (rail.classList.contains('is-horizontal')) {
+                        return Math.max(260, Math.floor(scroller.clientWidth * 0.75));
+                    }
+                    return Math.max(180, Math.floor(scroller.clientHeight * 0.35));
+                }
+
+                // NOTE: On mobile we rely on native horizontal scrolling (overflow-x: auto)
+                // plus touch-action: pan-x on the scroller. Avoid preventDefault(), which can
+                // break scrolling in some browsers/emulators.
+
+                // Click-to-scroll arrows.
+                up.addEventListener('click', function () {
+                    if (rail.classList.contains('is-horizontal')) {
+                        scroller.scrollBy({ left: -step(), top: 0, behavior: 'smooth' });
+                    } else {
+                        scroller.scrollBy({ top: -step(), left: 0, behavior: 'smooth' });
+                    }
+                });
+                down.addEventListener('click', function () {
+                    if (rail.classList.contains('is-horizontal')) {
+                        scroller.scrollBy({ left: step(), top: 0, behavior: 'smooth' });
+                    } else {
+                        scroller.scrollBy({ top: step(), left: 0, behavior: 'smooth' });
+                    }
+                });
+
+                // Apply now and on breakpoint changes.
+                applyResponsiveRail();
+                if (mq.addEventListener) {
+                    mq.addEventListener('change', applyResponsiveRail);
+                } else if (mq.addListener) {
+                    mq.addListener(applyResponsiveRail);
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initBadgeRail);
+            } else {
+                initBadgeRail();
+            }
+        })();
+    </script>
 </body>
 </html>
