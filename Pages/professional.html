@@ -44,13 +44,15 @@
 /* Two-column layout (content + badge rail) that feels native (no overlay) */
 .page-wrapper {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 14.75rem;
+    /* Keep the right rail fixed. Tighten and shift the left two rails slightly right by
+       reducing their widths and the inter-column gap. */
+    grid-template-columns: minmax(0, 1fr) 12.25rem 12.25rem 14.75rem;
     grid-template-rows: auto 1fr auto;
     grid-template-areas:
-        "header header"
-        "main rail"
-        "footer footer";
-    column-gap: 1.5rem;
+        "header header header header"
+        "main rail-diplomas rail-middle rail-right"
+        "footer footer footer footer";
+    column-gap: 1rem;
 }
 
 .site-header,
@@ -67,8 +69,6 @@
 }
 
 .badge-rail {
-    grid-column: 2;
-    grid-area: rail;
     align-self: start;
     position: sticky;
     top: 6.25rem;
@@ -77,6 +77,31 @@
     /* Keep the rail underneath the footer so it never sits *on top* of it */
     z-index: 1;
 }
+
+.badge-rail--diplomas {
+    grid-column: 2;
+    grid-area: rail-diplomas;
+}
+
+.badge-rail--middle {
+    grid-column: 3;
+    grid-area: rail-middle;
+}
+
+.badge-rail--right {
+    grid-column: 4;
+    grid-area: rail-right;
+}
+
+/* Pull the left and middle badge columns closer to the right column.
+   Do not move the right-most column. */
+@media (min-width: 1025px) {
+    .badge-rail--diplomas,
+    .badge-rail--middle {
+        transform: translateX(28px);
+    }
+}
+
 
 /* Make sure the footer always renders above the badge rail (so the rail appears behind it). */
 .site-footer {
@@ -92,13 +117,16 @@
     background: transparent;
     border: 0;
     border-radius: 0;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: none;
     display: flex;
     flex-direction: column;
 }
 
 .badge-rail__arrow {
+    position: relative;
+    z-index: 12;
+
     appearance: none;
     border: 0;
     background: transparent;
@@ -172,6 +200,11 @@
     border: 0;
     background: transparent;
     transition: transform 160ms ease, filter 160ms ease;
+}
+
+button.badge-link {
+    cursor: pointer;
+    font: inherit;
 }
 
 .badge-link:hover,
@@ -352,95 +385,63 @@
 </div>
 </div>
 </header>
-<aside aria-label="Badges" class="badge-rail">
+<aside aria-label="Badges" class="badge-rail badge-rail--diplomas" id="badgeRailDiplomas">
 <div class="badge-rail__panel">
-<button aria-label="Scroll badges up" class="badge-rail__arrow" id="badgeUp" type="button">▲</button>
-<div aria-label="Scrollable badges" class="badge-rail__scroll" id="badgeScroll" tabindex="0">
+<button aria-label="Scroll badges up" class="badge-rail__arrow" id="badgeUpDiplomas" type="button">▲</button>
+<div aria-label="Scrollable badges" class="badge-rail__scroll" id="badgeScrollDiplomas" tabindex="0">
 <div class="badge-rail__group">
-<div class="badge-rail__h">Career path</div>
+<div class="badge-rail__h">Diplomas</div>
 <div class="badge-rail__grid">
-<a aria-label="Cyber Fundamentals (Immersive Labs)" class="badge-link" href="https://api.immersivelabs.online/share/achievements/9a9984fcb980c69b8a0f57002527e093" rel="noopener noreferrer" target="_blank" title="Cyber Fundamentals">
-<img alt="Cyber Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/Cyber Fundermentals.png"/>
-</a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/2af2e0a1e97fc8cbf353858062c934ff" rel="noopener noreferrer" target="_blank" title="Technical Fundamentals"><img alt="Technical Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/Technical Fundamentals.png"/></a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/932b28d259a1d93d5530a40538e6072b" rel="noopener noreferrer" target="_blank" title="Security Hygiene">
-<img alt="Security Hygiene badge" loading="lazy" src="../Assets/Media/Images/Badges/Security Hygiene.png"/>
-</a>
+<a class="badge-link" href="https://www.credly.com/badges/00d5870a-2ebc-470a-8d36-7f384447a437/linked_in_profile" rel="noopener noreferrer" target="_blank" title="Business Administrator Diploma"><img alt="Business Administrator Diploma badge" loading="lazy" src="../Assets/Media/Images/Badges/Business Administrator.png"/></a>
 </div>
 </div>
+
+</div><button aria-label="Scroll badges down" class="badge-rail__arrow" id="badgeDownDiplomas" type="button">▼</button>
+</div></aside>
+<aside aria-label="Badges" class="badge-rail badge-rail--middle" id="badgeRailMiddle">
+<div class="badge-rail__panel">
+<button aria-label="Scroll badges up" class="badge-rail__arrow" id="badgeUpMiddle" type="button">▲</button>
+<div aria-label="Scrollable badges" class="badge-rail__scroll" id="badgeScrollMiddle" tabindex="0">
 <div class="badge-rail__group">
-<div class="badge-rail__h">Cyber Fundamentals</div>
+<div class="badge-rail__h">Money &amp; Business</div>
 <div class="badge-rail__grid">
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/59ae971c94a7ee7a22db94e7494cc1f2" rel="noopener noreferrer" target="_blank" title="Networking">
-<img alt="Networking badge" loading="lazy" src="../Assets/Media/Images/Badges/Networking.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/83f12de29f7aa68a3083634e1df184c5" rel="noopener noreferrer" target="_blank" title="Introduction to Networking">
-<img alt="Introduction to Networking badge" loading="lazy" src="../Assets/Media/Images/Badges/Introduction to Networking.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/372653ccecbe6896a0d77b9d565a29b1" rel="noopener noreferrer" target="_blank" title="Linux Command Line">
-<img alt="Linux Command Line badge" loading="lazy" src="../Assets/Media/Images/Badges/Linux Command Line.png"/>
-</a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/1cb0e56c9902d94b1f114970feeab76d" rel="noopener noreferrer" target="_blank" title="Windows Concepts"><img alt="Windows Concepts badge" loading="lazy" src="../Assets/Media/Images/Badges/Windows Concepts.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/e976cb021e314f87ff50b20704af28fe" rel="noopener noreferrer" target="_blank" title="Windows Basics"><img alt="Windows Basics badge" loading="lazy" src="../Assets/Media/Images/Badges/Windows Basics.png"/></a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7522b5139ab50436767e65741a8f3046" rel="noopener noreferrer" target="_blank" title="Introduction to Digital Forensics">
-<img alt="Introduction to Digital Forensics badge" loading="lazy" src="../Assets/Media/Images/Badges/Introduction to Digital Forensics.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/536cdaf0b57b6e49e179a053735ed840" rel="noopener noreferrer" target="_blank" title="Introduction to Cryptography">
-<img alt="Introduction to Cryptography badge" loading="lazy" src="../Assets/Media/Images/Badges/Introduction to Cryptography.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/45aaa7471f435dfd95c8ef9066dee950" rel="noopener noreferrer" target="_blank" title="Modern Encryption">
-<img alt="Modern Encryption badge" loading="lazy" src="../Assets/Media/Images/Badges/Modern Encryption.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7cc9107821f11b85d6f83ea8721bbd49" rel="noopener noreferrer" target="_blank" title="Historic Encryption">
-<img alt="Historic Encryption badge" loading="lazy" src="../Assets/Media/Images/Badges/Historic Encryption.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/45d8dec9e55ba98bb13fe7f7fe663f5f" rel="noopener noreferrer" target="_blank" title="Secure Fundamentals">
-<img alt="Secure Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/Secure Fundamentals.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/9441a9f06bb059ba9fd5595617f08916" rel="noopener noreferrer" target="_blank" title="Ethics &amp; Laws">
-<img alt="Ethics &amp; Laws badge" loading="lazy" src="../Assets/Media/Images/Badges/Ethics &amp; Laws.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/5f0d4eb1ca83f62c3ed90dea4cb8fad3" rel="noopener noreferrer" target="_blank" title="Encoding">
-<img alt="Encoding badge" loading="lazy" src="../Assets/Media/Images/Badges/Encoding.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7b581168f3c080125f31055fab8511c4" rel="noopener noreferrer" target="_blank" title="Cyber 101">
-<img alt="Cyber 101 badge" loading="lazy" src="../Assets/Media/Images/Badges/Cyber 101.png"/>
-</a>
+<button class="badge-link badge-link--pdf" data-pdf="../Assets/Documents/Certifications/Leadership And Followership - Certificate.pdf" data-title="Leadership and Followership" title="Leadership and Followership" type="button">
+<img alt="Leadership and followership badge" loading="lazy" src="../Assets/Media/Images/Badges/Leadership and followership.png"/>
+</button>
+<button class="badge-link badge-link--pdf" data-pdf="../Assets/Documents/Certifications/Effective Communication In The Workplace - Certificate.pdf" data-title="Effective Communication in the Workplace" title="Effective Communication in the Workplace" type="button">
+<img alt="Effective communication in the workplace badge" loading="lazy" src="../Assets/Media/Images/Badges/Effective Communication In The Workplace.png"/>
+</button>
+<button class="badge-link badge-link--pdf" data-pdf="../Assets/Documents/Certifications/Working In Teams - Certificate.pdf" data-title="Working in Teams" title="Working in Teams" type="button">
+<img alt="Working in teams badge" loading="lazy" src="../Assets/Media/Images/Badges/Working in teams.png"/>
+</button>
+<button class="badge-link badge-link--pdf" data-pdf="../Assets/Documents/Certifications/Developing Career Resilience - Certificate.pdf" data-title="Developing Career Resilience" title="Developing Career Resilience" type="button">
+<img alt="Developing career resilience badge" loading="lazy" src="../Assets/Media/Images/Badges/Developing career resilience.png"/>
+</button>
+<button class="badge-link badge-link--pdf" data-pdf="../Assets/Documents/Certifications/Diversity And Inclusion In The Workplace - Certificate.pdf" data-title="Diversity and Inclusion in the Workplace" title="Diversity and Inclusion in the Workplace" type="button">
+<img alt="Diversity and inclusion in the workplace badge" loading="lazy" src="../Assets/Media/Images/Badges/Diversity and inclusion in the workplace.png"/>
+</button>
 </div>
 </div>
 <div class="badge-rail__group">
-<div class="badge-rail__h">Awareness</div>
+<div class="badge-rail__h">Education &amp; Development</div>
 <div class="badge-rail__grid">
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/bf013e1f64677b5139800532ce36c072" rel="noopener noreferrer" target="_blank" title="Social Engineering">
-<img alt="Social Engineering badge" loading="lazy" src="../Assets/Media/Images/Badges/Social Engineering.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/0ce5ca224a103f98d0da28e27d1ad2a4" rel="noopener noreferrer" target="_blank" title="Authentication">
-<img alt="Authentication badge" loading="lazy" src="../Assets/Media/Images/Badges/Authentication.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/4593cd88c6196f6e43e6b9794c90dd9f" rel="noopener noreferrer" target="_blank" title="Device Security">
-<img alt="Device Security badge" loading="lazy" src="../Assets/Media/Images/Badges/Device Security.png"/>
-</a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/992d21e0a107975bd0f8751dc0a900ed" rel="noopener noreferrer" target="_blank" title="Threat Hunting - Theory"><img alt="Threat Hunting - Theory badge" loading="lazy" src="../Assets/Media/Images/Badges/Threat Hunting - Theory.png"/></a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7f50104638ad45562d05113331929656" rel="noopener noreferrer" target="_blank" title="Security Reporting and Responsiveness">
-<img alt="Security Reporting and Responsiveness badge" loading="lazy" src="../Assets/Media/Images/Badges/Security Reporting and Responsiveness.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/af2a5031ff60cb8b8bb797b08841c13e" rel="noopener noreferrer" target="_blank" title="Data Handling">
-<img alt="Data Handling badge" loading="lazy" src="../Assets/Media/Images/Badges/Data Handling.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/4cb946e908e8bd60092b5a6a535a165c" rel="noopener noreferrer" target="_blank" title="Browsing Securely">
-<img alt="Browsing Securely badge" loading="lazy" src="../Assets/Media/Images/Badges/Browsing Securely.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/b67c0eeec0368d2278501c2062c2e481" rel="noopener noreferrer" target="_blank" title="Cyber Safety">
-<img alt="Cyber Safety badge" loading="lazy" src="../Assets/Media/Images/Badges/Cyber Safety.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/df2442a4c275f602ddb08b02130d5022" rel="noopener noreferrer" target="_blank" title="Physical Security">
-<img alt="Physical Security badge" loading="lazy" src="../Assets/Media/Images/Badges/Physical Security.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/c5d25af6b1f705c562e25273034e7e4e" rel="noopener noreferrer" target="_blank" title="Digital Footprint">
-<img alt="Digital Footprint badge" loading="lazy" src="../Assets/Media/Images/Badges/Digital Footprint.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/6f9770d3d09e180abfa954d2ceba265c" rel="noopener noreferrer" target="_blank" title="Staying Safe Online">
-<img alt="Staying Safe Online badge" loading="lazy" src="../Assets/Media/Images/Badges/Staying Safe Online.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/47cda096d5698a00b3e3860ca3f48646" rel="noopener noreferrer" target="_blank" title="Range Exercise Prep: Artica Defensive – Investigation Fundamentals"><img alt="Range Exercise Prep: Artica Defensive – Investigation Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/Range Exercise Prep Artica Defensive Investigation Fundamentals.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/ce5d349381d35c5e394c19cb5a9dcd84" rel="noopener noreferrer" target="_blank" title="Range Exercise Prep: Op. Palisade – Investigation Fundamentals"><img alt="Range Exercise Prep: Op. Palisade – Investigation Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/Range Exercise Prep Op. Palisade  Investigation Fundamentals.png"/></a></div>
+<button class="badge-link badge-link--pdf" data-pdf="../Assets/Documents/Certifications/Succeed In The Workplace - Certificate.pdf" data-title="Succeed in the Workplace" title="Succeed in the Workplace" type="button">
+<img alt="Succeed in the workplace badge" loading="lazy" src="../Assets/Media/Images/Badges/Succeed in the workplace.png"/>
+</button>
+<button class="badge-link badge-link--pdf" data-pdf="../Assets/Documents/Certifications/Becoming An Ethical Researcher - Certificate.pdf" data-title="Becoming an Ethical Researcher" title="Becoming an Ethical Researcher" type="button">
+<img alt="Becoming an ethical researcher badge" loading="lazy" src="../Assets/Media/Images/Badges/Becoming an ethical researcher.png"/>
+</button>
 </div>
-<div class="badge-rail__group">
+</div>
+</div>
+<button aria-label="Scroll badges down" class="badge-rail__arrow" id="badgeDownMiddle" type="button">▼</button>
+</div>
+</aside>
+<aside aria-label="Badges" class="badge-rail badge-rail--right" id="badgeRailRight">
+<div class="badge-rail__panel">
+<button aria-label="Scroll badges up" class="badge-rail__arrow" id="badgeUpRight" type="button">▲</button>
+<div aria-label="Scrollable badges" class="badge-rail__scroll" id="badgeScrollRight" tabindex="0">
+<div class="badge-rail__group"><div class="badge-rail__h">Career Paths</div><div class="badge-rail__grid"><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/9a9984fcb980c69b8a0f57002527e093" rel="noopener noreferrer" target="_blank" title="Cyber Fundamentals"><img alt="Cyber Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/Cyber Fundermentals.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/2af2e0a1e97fc8cbf353858062c934ff" rel="noopener noreferrer" target="_blank" title="Technical Fundamentals"><img alt="Technical Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/Technical Fundamentals.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/932b28d259a1d93d5530a40538e6072b" rel="noopener noreferrer" target="_blank" title="Security Hygiene"><img alt="Security Hygiene badge" loading="lazy" src="../Assets/Media/Images/Badges/Security Hygiene.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/1b379243f7b69d046a7535bdd043a372" rel="noopener noreferrer" target="_blank" title="Management, Risk, and Compliance"><img alt="Management, Risk, and Compliance badge" loading="lazy" src="../Assets/Media/Images/Badges/Management Risk and Compliance.png"/></a></div></div><div class="badge-rail__group"><div class="badge-rail__h">Fundamentals</div><div class="badge-rail__grid"><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/1cb0e56c9902d94b1f114970feeab76d" rel="noopener noreferrer" target="_blank" title="Windows Concepts"><img alt="Windows Concepts badge" loading="lazy" src="../Assets/Media/Images/Badges/Windows Concepts.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/e976cb021e314f87ff50b20704af28fe" rel="noopener noreferrer" target="_blank" title="Windows Basics"><img alt="Windows Basics badge" loading="lazy" src="../Assets/Media/Images/Badges/Windows Basics.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/59ae971c94a7ee7a22db94e7494cc1f2" rel="noopener noreferrer" target="_blank" title="Networking"><img alt="Networking badge" loading="lazy" src="../Assets/Media/Images/Badges/Networking.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/83f12de29f7aa68a3083634e1df184c5" rel="noopener noreferrer" target="_blank" title="Introduction to Networking"><img alt="Introduction to Networking badge" loading="lazy" src="../Assets/Media/Images/Badges/Introduction to Networking.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/372653ccecbe6896a0d77b9d565a29b1" rel="noopener noreferrer" target="_blank" title="Linux Command Line"><img alt="Linux Command Line badge" loading="lazy" src="../Assets/Media/Images/Badges/Linux Command Line.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/536cdaf0b57b6e49e179a053735ed840" rel="noopener noreferrer" target="_blank" title="Introduction to Cryptography"><img alt="Introduction to Cryptography badge" loading="lazy" src="../Assets/Media/Images/Badges/Introduction to Cryptography.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/45aaa7471f435dfd95c8ef9066dee950" rel="noopener noreferrer" target="_blank" title="Modern Encryption"><img alt="Modern Encryption badge" loading="lazy" src="../Assets/Media/Images/Badges/Modern Encryption.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7cc9107821f11b85d6f83ea8721bbd49" rel="noopener noreferrer" target="_blank" title="Historic Encryption"><img alt="Historic Encryption badge" loading="lazy" src="../Assets/Media/Images/Badges/Historic Encryption.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/5f0d4eb1ca83f62c3ed90dea4cb8fad3" rel="noopener noreferrer" target="_blank" title="Encoding"><img alt="Encoding badge" loading="lazy" src="../Assets/Media/Images/Badges/Encoding.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/9441a9f06bb059ba9fd5595617f08916" rel="noopener noreferrer" target="_blank" title="Ethics &amp; Laws"><img alt="Ethics &amp; Laws badge" loading="lazy" src="../Assets/Media/Images/Badges/Ethics &amp; Laws.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7b581168f3c080125f31055fab8511c4" rel="noopener noreferrer" target="_blank" title="Cyber 101"><img alt="Cyber 101 badge" loading="lazy" src="../Assets/Media/Images/Badges/Cyber 101.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/bf013e1f64677b5139800532ce36c072" rel="noopener noreferrer" target="_blank" title="Social Engineering"><img alt="Social Engineering badge" loading="lazy" src="../Assets/Media/Images/Badges/Social Engineering.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/af2a5031ff60cb8b8bb797b08841c13e" rel="noopener noreferrer" target="_blank" title="Data Handling"><img alt="Data Handling badge" loading="lazy" src="../Assets/Media/Images/Badges/Data Handling.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/4cb946e908e8bd60092b5a6a535a165c" rel="noopener noreferrer" target="_blank" title="Browsing Securely"><img alt="Browsing Securely badge" loading="lazy" src="../Assets/Media/Images/Badges/Browsing Securely.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/b67c0eeec0368d2278501c2062c2e481" rel="noopener noreferrer" target="_blank" title="Cyber Safety"><img alt="Cyber Safety badge" loading="lazy" src="../Assets/Media/Images/Badges/Cyber Safety.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/df2442a4c275f602ddb08b02130d5022" rel="noopener noreferrer" target="_blank" title="Physical Security"><img alt="Physical Security badge" loading="lazy" src="../Assets/Media/Images/Badges/Physical Security.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/c5d25af6b1f705c562e25273034e7e4e" rel="noopener noreferrer" target="_blank" title="Digital Footprint"><img alt="Digital Footprint badge" loading="lazy" src="../Assets/Media/Images/Badges/Digital Footprint.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/6f9770d3d09e180abfa954d2ceba265c" rel="noopener noreferrer" target="_blank" title="Staying Safe Online"><img alt="Staying Safe Online badge" loading="lazy" src="../Assets/Media/Images/Badges/Staying Safe Online.png"/></a></div></div><div class="badge-rail__group"><div class="badge-rail__h">Offensive Cyber</div><div class="badge-rail__grid"><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/e22fcbc8f26ee0984b854ccc65f30f25" rel="noopener noreferrer" target="_blank" title="Introduction to Penetration Testing"><img alt="Introduction to Penetration Testing badge" loading="lazy" src="../Assets/Media/Images/Badges/Introduction to Penetration Testing.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/cbc6c225ebd0dfc61eedf95f550f6422" rel="noopener noreferrer" target="_blank" title="Introduction to Penetration Test Programs"><img alt="Introduction to Penetration Test Programs badge" loading="lazy" src="../Assets/Media/Images/Badges/Introduction to Penetration Test Programs.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/6d980c5ec7fcda44007e2da87798f7ee" rel="noopener noreferrer" target="_blank" title="Introducing the Cyber Kill Chain"><img alt="Introducing the Cyber Kill Chain badge" loading="lazy" src="../Assets/Media/Images/Badges/Introducing the Cyber Kill Chain.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/0b780d0d66acb3800178eb025163f9d0" rel="noopener noreferrer" target="_blank" title="Active Directory Basics"><img alt="Active Directory Basics badge" loading="lazy" src="../Assets/Media/Images/Badges/Active Directory Basics.png"/></a></div></div><div class="badge-rail__group"><div class="badge-rail__h">Defensive Cyber</div><div class="badge-rail__grid"><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/99ff44c72c345005320e5ec1d569df08" rel="noopener noreferrer" target="_blank" title="Vulnerability Management"><img alt="Vulnerability Management badge" loading="lazy" src="../Assets/Media/Images/Badges/Vulnerability Management.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/992d21e0a107975bd0f8751dc0a900ed" rel="noopener noreferrer" target="_blank" title="Threat Hunting - Theory"><img alt="Threat Hunting - Theory badge" loading="lazy" src="../Assets/Media/Images/Badges/Threat Hunting - Theory.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7522b5139ab50436767e65741a8f3046" rel="noopener noreferrer" target="_blank" title="Introduction to Digital Forensics"><img alt="Introduction to Digital Forensics badge" loading="lazy" src="../Assets/Media/Images/Badges/Introduction to Digital Forensics.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/7f50104638ad45562d05113331929656" rel="noopener noreferrer" target="_blank" title="Security Reporting and Responsiveness"><img alt="Security Reporting and Responsiveness badge" loading="lazy" src="../Assets/Media/Images/Badges/Security Reporting and Responsiveness.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/4593cd88c6196f6e43e6b9794c90dd9f" rel="noopener noreferrer" target="_blank" title="Device Security"><img alt="Device Security badge" loading="lazy" src="../Assets/Media/Images/Badges/Device Security.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/47cda096d5698a00b3e3860ca3f48646" rel="noopener noreferrer" target="_blank" title="Range Exercise Prep: Artica Defensive – Investigation Fundamentals"><img alt="Range Exercise Prep: Artica Defensive – Investigation Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/Range Exercise Prep Artica Defensive Investigation Fundamentals.png"/></a></div></div><div class="badge-rail__group"><div class="badge-rail__h">Application Security</div><div class="badge-rail__grid"><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/e7b0d9749a1e6cec07596eb479484689" rel="noopener noreferrer" target="_blank" title="Security Headers"><img alt="Security Headers badge" loading="lazy" src="../Assets/Media/Images/Badges/Security Headers.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/c1a9e9d7de69bf797309cc7503876afc" rel="noopener noreferrer" target="_blank" title="Git Security"><img alt="Git Security badge" loading="lazy" src="../Assets/Media/Images/Badges/Git Security.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/0ce5ca224a103f98d0da28e27d1ad2a4" rel="noopener noreferrer" target="_blank" title="Authentication"><img alt="Authentication badge" loading="lazy" src="../Assets/Media/Images/Badges/Authentication.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/45d8dec9e55ba98bb13fe7f7fe663f5f" rel="noopener noreferrer" target="_blank" title="Secure Fundamentals"><img alt="Secure Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/Secure Fundamentals.png"/></a></div></div><div class="badge-rail__group"><div class="badge-rail__h">Cloud Security</div><div class="badge-rail__grid"><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/979e080a8eaa375aab206a13a9d0839e" rel="noopener noreferrer" target="_blank" title="CISA and NSA Kubernetes Hardening Guidance"><img alt="CISA and NSA Kubernetes Hardening Guidance badge" loading="lazy" src="../Assets/Media/Images/Badges/CISA and NSA Kubernetes Hardening Guidance.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/fbf59a4ebf8630cded4cc956de60f2e0" rel="noopener noreferrer" target="_blank" title="Zero Trust in the Cloud"><img alt="Zero Trust in the Cloud badge" loading="lazy" src="../Assets/Media/Images/Badges/Zero Trust in the Cloud.png"/></a></div></div><div class="badge-rail__group"><div class="badge-rail__h">Artificial Intelligence</div><div class="badge-rail__grid"><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/11e53744e276517f854c6910d50349d3" rel="noopener noreferrer" target="_blank" title="AI Fundamentals"><img alt="AI Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/AI Fundamentals.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/5ec7550c144f055b0209e1287928418e" rel="noopener noreferrer" target="_blank" title="AI Foundations"><img alt="AI Foundations badge" loading="lazy" src="../Assets/Media/Images/Badges/AI Foundations.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/2d2421539d07a6ed335c24afdf11af69" rel="noopener noreferrer" target="_blank" title="AI for Business"><img alt="AI for Business badge" loading="lazy" src="../Assets/Media/Images/Badges/AI for Business.png"/></a></div></div><div class="badge-rail__group">
 <div class="badge-rail__h">Crisis Management</div>
 <div class="badge-rail__grid">
 <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/f0cbe7fccc4f612afbf634ef9fceb0c2" rel="noopener noreferrer" target="_blank" title="Business Impact Analysis">
@@ -457,7 +458,7 @@
 <div class="badge-rail__group">
 <div class="badge-rail__h">Management, Risk &amp; Compliance</div>
 <div class="badge-rail__grid">
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/69473c6457324811396791b66621ea92" rel="noopener noreferrer" target="_blank" title="Cyber for Board Members">
+<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/edde98c0cc657ce81cc9c99e8038b358" rel="noopener noreferrer" target="_blank" title="NIST – Security and Privacy Controls for Information Systems and Organizations (800-53)"><img alt="NIST – Security and Privacy Controls for Information Systems and Organizations (800-53) badge" loading="lazy" src="../Assets/Media/Images/Badges/NIST Security and Privacy Controls for Information Systems and Organizations 800-53.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/2c5bf0349008a27d793e88e8025ff8dd" rel="noopener noreferrer" target="_blank" title="NCSC - Cloud Security Guidance"><img alt="NCSC - Cloud Security Guidance badge" loading="lazy" src="../Assets/Media/Images/Badges/NCSC - Cloud Security Guidance.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/e1b59ce61872742d2bb65826902cfbba" rel="noopener noreferrer" target="_blank" title="MITRE ATT&amp;CK"><img alt="MITRE ATT&amp;CK badge" loading="lazy" src="../Assets/Media/Images/Badges/MITRE ATTCK.png"/></a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/69473c6457324811396791b66621ea92" rel="noopener noreferrer" target="_blank" title="Cyber for Board Members">
 <img alt="Cyber for Board Members badge" loading="lazy" src="../Assets/Media/Images/Badges/Cyber for Board Members.png"/>
 </a>
 <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/de93ea891fe28014f5e70fe8d2ffa39b" rel="noopener noreferrer" target="_blank" title="Cyber for Executives">
@@ -474,9 +475,6 @@
 </a><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/116006239459c5b9b7468e222ca381dd" rel="noopener noreferrer" target="_blank" title="NIST – Guidelines on Security and Privacy in Public Cloud Computing (800-144)"><img alt="NIST – Guidelines on Security and Privacy in Public Cloud Computing (800-144) badge" loading="lazy" src="../Assets/Media/Images/Badges/NIST Guidelines on Security and Privacy in Public Cloud Computing (800-144).png"/></a>
 <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/c5c38d1dde64c32e87c500dba7474c98" rel="noopener noreferrer" target="_blank" title="Human Factors in Cybersecurity">
 <img alt="Human Factors in Cybersecurity badge" loading="lazy" src="../Assets/Media/Images/Badges/Human Factors in Cybersecurity.png"/>
-</a>
-<a class="badge-link" href="https://api.immersivelabs.online/share/achievements/2d2421539d07a6ed335c24afdf11af69" rel="noopener noreferrer" target="_blank" title="AI for Business">
-<img alt="AI for Business badge" loading="lazy" src="../Assets/Media/Images/Badges/AI for Business.png"/>
 </a>
 <a class="badge-link" href="https://api.immersivelabs.online/share/achievements/675e104e0554f56c876dc4f20978a2e5" rel="noopener noreferrer" target="_blank" title="ISO 22381 - Security and Resilience for Identification Systems">
 <img alt="ISO 22381 badge" loading="lazy" src="../Assets/Media/Images/Badges/ISO 22381 - Security and Resilience for Identification Systems.png"/>
@@ -497,9 +495,9 @@
 <img alt="ISO 31000 badge" loading="lazy" src="../Assets/Media/Images/Badges/ISO 31000 - Risk Management.png"/>
 </a>
 </div>
+</div><div class="badge-rail__group"><div class="badge-rail__h">Challenges &amp; Scenarios</div><div class="badge-rail__grid"><a class="badge-link" href="https://api.immersivelabs.online/share/achievements/ce5d349381d35c5e394c19cb5a9dcd84" rel="noopener noreferrer" target="_blank" title="Range Exercise Prep: Op. Palisade – Investigation Fundamentals"><img alt="Range Exercise Prep: Op. Palisade – Investigation Fundamentals badge" loading="lazy" src="../Assets/Media/Images/Badges/Range Exercise Prep Op. Palisade  Investigation Fundamentals.png"/></a></div></div>
 </div>
-<button aria-label="Scroll badges down" class="badge-rail__arrow" id="badgeDown" type="button">▼</button>
-</div>
+<button aria-label="Scroll badges down" class="badge-rail__arrow" id="badgeDownRight" type="button">▼</button>
 </div></aside>
 <main id="main-professional">
 <section class="section fade-in-on-scroll visible">
@@ -550,98 +548,133 @@
 <script src="../Assets/script.js"></script>
 <script>
         (function () {
-            function initBadgeRail() {
-                var rail = document.querySelector('.badge-rail');
-                var scroller = document.getElementById('badgeScroll');
-                var up = document.getElementById('badgeUp');
-                var down = document.getElementById('badgeDown');
+            function initPdfBadges() {
+                var buttons = document.querySelectorAll('.badge-link--pdf[data-pdf]');
+                if (!buttons || !buttons.length) return;
+
+                /* Open the PDF directly in the same tab. */
+                buttons.forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var pdf = (btn.getAttribute('data-pdf') || '').trim();
+                        if (!pdf) return;
+                        window.location.href = pdf;
+                    });
+                });
+            }
+
+            function initBadgeRails() {
                 var cvCta = document.querySelector('.cv-cta-wrapper');
-                if (!rail || !scroller || !up || !down) return;
-
-                // Remember the desktop placement so we can restore it.
-                var desktopParent = rail.parentNode;
-                var desktopNext = rail.nextSibling;
-
-                // On smaller screens, move the rail underneath the CV button and make it horizontal.
                 var mq = window.matchMedia('(max-width: 1024px)');
 
-                function setArrowMode(horizontal) {
+                var rails = [
+                    {
+                        rail: document.getElementById('badgeRailDiplomas'),
+                        scroller: document.getElementById('badgeScrollDiplomas'),
+                        up: document.getElementById('badgeUpDiplomas'),
+                        down: document.getElementById('badgeDownDiplomas')
+                    },
+                    {
+                        rail: document.getElementById('badgeRailMiddle'),
+                        scroller: document.getElementById('badgeScrollMiddle'),
+                        up: document.getElementById('badgeUpMiddle'),
+                        down: document.getElementById('badgeDownMiddle')
+                    },
+                    {
+                        rail: document.getElementById('badgeRailRight'),
+                        scroller: document.getElementById('badgeScrollRight'),
+                        up: document.getElementById('badgeUpRight'),
+                        down: document.getElementById('badgeDownRight')
+                    }
+                ].filter(function (r) { return r.rail && r.scroller && r.up && r.down; });
+
+                if (!rails.length) return;
+
+                rails.forEach(function (r) {
+                    r.desktopParent = r.rail.parentNode;
+                    r.desktopNext = r.rail.nextSibling;
+                });
+
+                function setArrowMode(r, horizontal) {
                     if (horizontal) {
-                        up.textContent = '◀';
-                        down.textContent = '▶';
-                        up.setAttribute('aria-label', 'Scroll badges left');
-                        down.setAttribute('aria-label', 'Scroll badges right');
+                        r.up.textContent = '◀';
+                        r.down.textContent = '▶';
+                        r.up.setAttribute('aria-label', 'Scroll badges left');
+                        r.down.setAttribute('aria-label', 'Scroll badges right');
                     } else {
-                        up.textContent = '▲';
-                        down.textContent = '▼';
-                        up.setAttribute('aria-label', 'Scroll badges up');
-                        down.setAttribute('aria-label', 'Scroll badges down');
+                        r.up.textContent = '▲';
+                        r.down.textContent = '▼';
+                        r.up.setAttribute('aria-label', 'Scroll badges up');
+                        r.down.setAttribute('aria-label', 'Scroll badges down');
                     }
                 }
 
-                function applyResponsiveRail() {
+                function step(r) {
+                    if (r.rail.classList.contains('is-horizontal')) {
+                        return Math.max(260, Math.floor(r.scroller.clientWidth * 0.75));
+                    }
+                    return Math.max(180, Math.floor(r.scroller.clientHeight * 0.35));
+                }
+
+                rails.forEach(function (r) {
+                    r.up.addEventListener('click', function () {
+                        if (r.rail.classList.contains('is-horizontal')) {
+                            r.scroller.scrollBy({ left: -step(r), top: 0, behavior: 'smooth' });
+                        } else {
+                            r.scroller.scrollBy({ top: -step(r), left: 0, behavior: 'smooth' });
+                        }
+                    });
+                    r.down.addEventListener('click', function () {
+                        if (r.rail.classList.contains('is-horizontal')) {
+                            r.scroller.scrollBy({ left: step(r), top: 0, behavior: 'smooth' });
+                        } else {
+                            r.scroller.scrollBy({ top: step(r), left: 0, behavior: 'smooth' });
+                        }
+                    });
+                });
+
+                function applyResponsiveRails() {
                     var horizontal = mq.matches;
 
                     if (horizontal) {
-                        rail.classList.add('is-horizontal');
-                        setArrowMode(true);
+                        rails.forEach(function (r) {
+                            r.rail.classList.add('is-horizontal');
+                            setArrowMode(r, true);
+                        });
 
-                        // Insert immediately after the CV button wrapper.
                         if (cvCta && cvCta.parentNode) {
-                            cvCta.parentNode.insertBefore(rail, cvCta.nextSibling);
+                            var anchor = cvCta.nextSibling;
+                            rails.forEach(function (r) {
+                                cvCta.parentNode.insertBefore(r.rail, anchor);
+                                anchor = r.rail.nextSibling;
+                            });
                         }
                     } else {
-                        rail.classList.remove('is-horizontal');
-                        setArrowMode(false);
-
-                        // Restore to original desktop position.
-                        if (desktopParent) {
-                            desktopParent.insertBefore(rail, desktopNext);
-                        }
+                        rails.forEach(function (r) {
+                            r.rail.classList.remove('is-horizontal');
+                            setArrowMode(r, false);
+                            if (r.desktopParent) {
+                                r.desktopParent.insertBefore(r.rail, r.desktopNext);
+                            }
+                        });
                     }
                 }
 
-                function step() {
-                    // Use width when horizontal, height when vertical.
-                    if (rail.classList.contains('is-horizontal')) {
-                        return Math.max(260, Math.floor(scroller.clientWidth * 0.75));
-                    }
-                    return Math.max(180, Math.floor(scroller.clientHeight * 0.35));
-                }
-
-                // NOTE: On mobile we rely on native horizontal scrolling (overflow-x: auto)
-                // plus touch-action: pan-x on the scroller. Avoid preventDefault(), which can
-                // break scrolling in some browsers/emulators.
-
-                // Click-to-scroll arrows.
-                up.addEventListener('click', function () {
-                    if (rail.classList.contains('is-horizontal')) {
-                        scroller.scrollBy({ left: -step(), top: 0, behavior: 'smooth' });
-                    } else {
-                        scroller.scrollBy({ top: -step(), left: 0, behavior: 'smooth' });
-                    }
-                });
-                down.addEventListener('click', function () {
-                    if (rail.classList.contains('is-horizontal')) {
-                        scroller.scrollBy({ left: step(), top: 0, behavior: 'smooth' });
-                    } else {
-                        scroller.scrollBy({ top: step(), left: 0, behavior: 'smooth' });
-                    }
-                });
-
-                // Apply now and on breakpoint changes.
-                applyResponsiveRail();
+                applyResponsiveRails();
                 if (mq.addEventListener) {
-                    mq.addEventListener('change', applyResponsiveRail);
+                    mq.addEventListener('change', applyResponsiveRails);
                 } else if (mq.addListener) {
-                    mq.addListener(applyResponsiveRail);
+                    mq.addListener(applyResponsiveRails);
                 }
             }
 
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initBadgeRail);
+                document.addEventListener('DOMContentLoaded', function () {
+                    initBadgeRails();
+                    initPdfBadges();
+                });
             } else {
-                initBadgeRail();
+                initBadgeRails();
+                initPdfBadges();
             }
         })();
     </script>

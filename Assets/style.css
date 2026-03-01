@@ -478,3 +478,23 @@ body.dark-theme .footer-social-link,body.high-contrast .footer-social-link{borde
   justify-content: center;
   box-sizing: border-box;
 }
+
+/* Homepage LinkedIn section alignment */
+.home-linkedin p{
+    font-size:0.95rem;
+    color:var(--text-soft);
+    max-width:640px;
+    margin:0 auto;
+}
+
+/* Smaller LinkedIn button on homepage */
+.linkedin-btn{
+    padding:0.55rem 1.1rem;
+    font-size:0.82rem;
+}
+
+/* Slightly larger quick-link chips */
+.home-quick-links .chip-link{
+    padding:0.45rem 1.0rem;
+    font-size:0.84rem;
+}

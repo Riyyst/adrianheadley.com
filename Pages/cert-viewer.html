@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Certificate</title>
+<link href="../Assets/style.css" rel="stylesheet"/>
+<style>
+    .viewer-wrap {
+      min-height: calc(100vh - 7.5rem);
+      padding: 1.25rem;
+      display: grid;
+      place-items: center;
+    }
+
+    .viewer-card {
+      width: min(1100px, 100%);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.35);
+      border: 1px solid rgba(255,255,255,0.22);
+    }
+
+    .viewer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.9rem 1rem;
+    }
+
+    .viewer-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .viewer-actions a {
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .viewer-frame {
+      width: 100%;
+      height: min(78vh, 900px);
+      border: 0;
+      display: block;
+      background: #fff;
+    }
+
+    @media (max-width: 640px) {
+      .viewer-frame { height: 78vh; }
+      .viewer-head { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrapper" style="grid-template-columns: 1fr; grid-template-areas: 'header' 'main' 'footer';">
+<header class="site-header" style="grid-area: header;">
+<nav aria-label="Primary navigation" class="top-nav">
+<a class="brand" href="../index.html">
+<img alt="AH icon" class="brand-icon" src="../Assets/ah-icon.png"/>
+<span class="brand-text">
+<strong>Adrian Headley</strong>
+<small>Portfolio</small>
+</span>
+</a>
+<div class="nav-links">
+<a href="../index.html">Home</a>
+<a class="active" href="professional.html">Career</a>
+<a href="business.html">Business</a>
+<a href="projects.html">Projects</a>
+<a href="contact.html">Contact</a>
+</div>
+<button class="accessibility-btn" id="accessibilityToggle" type="button">Accessibility</button>
+</nav>
+</header>
+<main id="main" style="grid-area: main;">
+<section class="viewer-wrap">
+<div class="viewer-card">
+<div class="viewer-head">
+<h1 class="viewer-title" id="viewerTitle">Certificate</h1>
+<div class="viewer-actions">
+<a href="javascript:history.back()">Back</a>
+</div>
+</div>
+<iframe class="viewer-frame" id="viewerFrame" referrerpolicy="no-referrer" title="Certificate viewer"></iframe>
+</div>
+</section>
+</main>
+<footer class="site-footer" style="grid-area: footer;">
+<div class="footer-inner">
+<p class="footer-main">© 2025 Adrian Headley</p>
+<div aria-label="Social links" class="footer-social">
+<a aria-label="Contact form" class="footer-social-link" href="contact.html"><span>✉</span></a>
+<a aria-label="LinkedIn" class="footer-social-link" href="https://uk.linkedin.com/in/adrianheadley?trk=people-guest_people_search-card" rel="noopener noreferrer" target="_blank"><span>in</span></a>
+<a aria-label="Facebook" class="footer-social-link" href="https://www.facebook.com/AdrianHeadley04/" rel="noopener noreferrer" target="_blank"><span>f</span></a>
+<a aria-label="X (Twitter)" class="footer-social-link" href="https://x.com/adrianheadleyhq" rel="noopener noreferrer" target="_blank"><span>X</span></a>
+</div>
+</div>
+</footer>
+</div>
+<script src="../Assets/script.js"></script>
+<script>
+    (function () {
+      function qp(name) {
+        try {
+          return new URLSearchParams(window.location.search).get(name) || '';
+        } catch (e) {
+          return '';
+        }
+      }
+
+      var title = qp('title');
+      var file = qp('file');
+
+      if (title) {
+        document.title = title + ' | Certificate';
+        var t = document.getElementById('viewerTitle');
+        if (t) t.textContent = title;
+      }
+
+      var frame = document.getElementById('viewerFrame');
+      if (frame && file) {
+        /* file is a relative path from professional.html.
+           Keep it as-is so the site works on GitHub Pages. */
+        var decoded = '';
+        try { decoded = decodeURIComponent(file); } catch (e) { decoded = file; }
+
+        /* Hide built-in UI where supported */
+        var src = decoded;
+        if (src.indexOf('#') === -1) {
+          src += '#toolbar=0&navpanes=0&scrollbar=0&view=FitH';
+        }
+        frame.src = src;
+      }
+
+      /* Best-effort view-only.
+         Stops common shortcuts and right-click. */
+      document.addEventListener('contextmenu', function (e) { e.preventDefault(); }, { capture: true });
+      document.addEventListener('keydown', function (e) {
+        var key = (e.key || '').toLowerCase();
+        if ((e.ctrlKey || e.metaKey) && (key === 'p' || key === 's' || key === 'u')) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }, true);
+      window.addEventListener('beforeprint', function (e) { if (e) e.preventDefault(); });
+    })();
+  </script>
+</body>
+</html>
