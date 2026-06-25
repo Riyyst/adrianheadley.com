@@ -256,7 +256,7 @@ function openArticleModal(article, options = {}){
 
 function getCvPdfPath(){
   const inPages=document.body.getAttribute("data-in-pages")==="true";
-  return (inPages?"../":"") + "Assets/Documents/CV-Website-Version.pdf";
+  return (inPages?"":"Pages/") + "cv.html";
 }
 function openCvModal(){
   openModal(()=>`
