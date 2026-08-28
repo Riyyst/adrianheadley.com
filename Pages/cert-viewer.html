@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Certificate</title>
+<title>Certificate | Adrian Headley</title>
+<meta content="noindex,follow" name="robots"/>
+<link href="../Assets/ah-icon.png" rel="icon" type="image/png"/>
 <link href="../Assets/style.css" rel="stylesheet"/>
 <style>
     .viewer-wrap {
@@ -55,26 +57,34 @@
     }
   </style>
 </head>
-<body>
+<body data-in-pages="true">
+<a class="skip-link" href="#main">Skip to main content</a>
 <div class="page-wrapper" style="grid-template-columns: 1fr; grid-template-areas: 'header' 'main' 'footer';">
-<header class="site-header" style="grid-area: header;">
-<nav aria-label="Primary navigation" class="top-nav">
+<header class="site-header" id="top" style="grid-area: header;">
+<div class="inner-header">
 <a class="brand" href="../index.html">
-<img alt="AH icon" class="brand-icon" src="../Assets/ah-icon.png"/>
-<span class="brand-text">
-<strong>Adrian Headley</strong>
-<small>Portfolio</small>
-</span>
+<span class="brand-mark brand-mark-image"><img alt="Adrian Headley logo" height="32" src="../Assets/ah-icon.png" width="32"/></span>
+<div class="brand-text"><span class="brand-name">Adrian Headley</span><span class="brand-subtle">Portfolio</span></div>
 </a>
-<div class="nav-links">
-<a href="../index.html">Home</a>
-<a class="active" href="professional.html">Career</a>
-<a href="business.html">Business</a>
-<a href="projects.html">Projects</a>
-<a href="contact.html">Contact</a>
-</div>
-<button class="accessibility-btn" id="accessibilityToggle" type="button">Accessibility</button>
+<nav aria-label="Main navigation" class="nav">
+<a class="nav-link" href="../index.html">Home</a>
+<a aria-current="page" class="nav-link is-current" href="professional.html">Career</a>
+<a class="nav-link" href="business.html">Business</a>
+<a class="nav-link" href="projects.html">Projects</a>
+<a class="nav-link" href="articles.html">Articles</a>
+<a class="nav-link" href="contact.html">Contact</a>
 </nav>
+<div class="header-actions">
+<button aria-controls="a11y-panel" aria-expanded="false" class="a11y-button" id="a11y-button">Accessibility</button>
+<div aria-label="Accessibility options" class="a11y-panel" id="a11y-panel">
+<div class="a11y-group a11y-group-text"><span class="a11y-label">Text size</span><button class="a11y-chip" data-text-size="normal" type="button">A</button><button class="a11y-chip" data-text-size="large" type="button">A+</button><button class="a11y-chip" data-text-size="xlarge" type="button">A++</button></div>
+<div class="a11y-group a11y-group-color"><span class="a11y-label">Colour</span><button class="a11y-chip" data-color-mode="normal" type="button">Default</button><button class="a11y-chip" data-color-mode="cb" type="button">Colourblind friendly</button></div>
+<div class="a11y-group"><label class="a11y-toggle"><input id="underline-toggle" type="checkbox"/><span>Underline links</span></label></div>
+<div class="a11y-group"><label class="a11y-toggle"><input id="motion-toggle" type="checkbox"/><span>Reduce motion</span></label></div>
+<div class="a11y-group"><label class="a11y-toggle"><input id="focus-toggle" type="checkbox"/><span>Stronger focus outlines</span></label></div>
+</div>
+</div>
+</div>
 </header>
 <main id="main" style="grid-area: main;">
 <section class="viewer-wrap">
@@ -90,13 +100,15 @@
 </section>
 </main>
 <footer class="site-footer" style="grid-area: footer;">
-<div class="footer-inner">
-<p class="footer-main">© 2025 Adrian Headley</p>
+<div class="footer-inner footer-inner-refreshed">
+<div class="footer-bottom">
+<p class="footer-main">© 2025–2026 Adrian Headley</p>
 <div aria-label="Social links" class="footer-social">
 <a aria-label="Contact form" class="footer-social-link" href="contact.html"><span>✉</span></a>
-<a aria-label="LinkedIn" class="footer-social-link" href="https://uk.linkedin.com/in/adrianheadley?trk=people-guest_people_search-card" rel="noopener noreferrer" target="_blank"><span>in</span></a>
+<a aria-label="LinkedIn" class="footer-social-link" href="https://www.linkedin.com/in/adrianheadley/" rel="noopener noreferrer" target="_blank"><span>in</span></a>
 <a aria-label="Facebook" class="footer-social-link" href="https://www.facebook.com/AdrianHeadley04/" rel="noopener noreferrer" target="_blank"><span>f</span></a>
 <a aria-label="X (Twitter)" class="footer-social-link" href="https://x.com/adrianheadleyhq" rel="noopener noreferrer" target="_blank"><span>X</span></a>
+</div>
 </div>
 </div>
 </footer>

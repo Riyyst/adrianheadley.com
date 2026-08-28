@@ -35,19 +35,48 @@ const articleCategories={
 
 function renderTimeline(container,items){
   if(!container)return;
-  container.innerHTML=items.map((item,index)=>`
-    <article class="timeline-item fade-in-on-scroll" style="--stagger-delay:${index*70}ms">
-      <div class="timeline-dot"></div>
-      <div class="timeline-content">
-        <div class="timeline-role">${item.role}</div>
-        <div class="timeline-meta">
-          ${item.period||""}
+  container.innerHTML=items.map((item,index)=>{
+    const current=(item.period||"").toLowerCase().includes("present");
+    const education=(item.role||"").toLowerCase().includes("bachelor of laws");
+    const description=(item.description||"").trim();
+    const sentenceBreak=description.indexOf(". ");
+    const summary=sentenceBreak>-1?description.slice(0,sentenceBreak+1):description;
+    const remainder=sentenceBreak>-1?description.slice(sentenceBreak+2).trim():"";
+    const focus=item.tags&&item.tags.length?item.tags.join(" · "):"";
+    const hasDetails=Boolean(remainder||focus);
+    return `
+      <article class="timeline-item fade-in-on-scroll${current?" is-current":""}${education?" is-education":""}" style="--stagger-delay:${index*70}ms">
+        <div class="timeline-dot" aria-hidden="true"></div>
+        <div class="timeline-content">
+          <div class="timeline-heading">
+            <div>
+              <div class="timeline-role">${item.role}</div>
+              <div class="timeline-meta">${item.period||""}</div>
+            </div>
+            ${current?`<span class="timeline-current-label">Current</span>`:""}
+          </div>
+          <div class="timeline-description">${summary}</div>
+          ${hasDetails?`<div class="timeline-details" id="timeline-details-${index}" hidden>
+            ${remainder?`<p>${remainder}</p>`:""}
+            ${focus?`<p><span class="timeline-focus-label">Focus</span> ${focus}</p>`:""}
+          </div>
+          <button class="timeline-more" type="button" aria-expanded="false" aria-controls="timeline-details-${index}">More details</button>`:""}
         </div>
-        <div class="timeline-description">${item.description||""}</div>
-        ${item.tags&&item.tags.length?`<div class="timeline-tags">${item.tags.map(tag=>`<span class="tag">${tag}</span>`).join("")}</div>`:""}
-      </div>
-    </article>
-  `).join("");
+      </article>
+    `;
+  }).join("");
+
+  container.querySelectorAll('.timeline-more').forEach(function(button){
+    button.addEventListener('click',function(){
+      const id=button.getAttribute('aria-controls');
+      const details=id?document.getElementById(id):null;
+      if(!details)return;
+      const open=button.getAttribute('aria-expanded')==='true';
+      button.setAttribute('aria-expanded',String(!open));
+      details.hidden=open;
+      button.textContent=open?'More details':'Less detail';
+    });
+  });
 }
 
 function renderProjects(container,items){
@@ -196,7 +225,10 @@ function openModal(buildContent){
   content.innerHTML=buildContent();
   backdrop.hidden=false;
   document.body.style.overflow="hidden";
-  requestAnimationFrame(()=>backdrop.classList.add("open"));
+  requestAnimationFrame(()=>{
+    backdrop.classList.add("open");
+    closeBtn.focus({preventScroll:true});
+  });
   closeBtn.onclick=closeModal;
   backdrop.addEventListener("click",onBackdropClick);
   document.addEventListener("keydown",onEsc);
@@ -205,13 +237,32 @@ function closeModal(){
   const {backdrop,content}=getModalElements();
   if(!backdrop)return;
   backdrop.classList.remove("open");
+  let closed=false;
   const handler=()=>{
+    if(closed)return;
+    closed=true;
     backdrop.hidden=true;
     backdrop.removeEventListener("transitionend",handler);
     if(content)content.innerHTML="";
     document.body.style.overflow="";
+    if(backdrop.dataset.modalMode==="article-reader"){
+      backdrop.classList.remove("article-reader-backdrop");
+      const panel=backdrop.querySelector(".overlay-panel");
+      if(panel){
+        panel.classList.remove("article-reader-panel");
+        const shareButton=panel.querySelector(".article-reader-share");
+        if(shareButton)shareButton.remove();
+      }
+      delete backdrop.dataset.modalMode;
+    }
   };
   backdrop.addEventListener("transitionend",handler);
+  const noMotion=document.body.classList.contains("reduce-motion")||window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(noMotion||parseFloat(getComputedStyle(backdrop).transitionDuration)===0){
+    handler();
+  }else{
+    window.setTimeout(handler,260);
+  }
   document.removeEventListener("keydown",onEsc);
   backdrop.removeEventListener("click",onBackdropClick);
   if(lastFocusedElement&&typeof lastFocusedElement.focus==="function"){lastFocusedElement.focus();}
@@ -475,3 +526,663 @@ document.addEventListener("DOMContentLoaded",()=>{
   });
 })();
 
+
+
+/* === Book-style Articles reader === */
+const articleBooks = {
+  "what-is-this-website": {
+    title: "What is this website?",
+    subtitle: "A short introduction",
+    pages: [
+      {
+        heading: "About this website",
+        text: [
+          "This website is my personal portfolio. It brings my professional experience, projects, business work and writing into one place.",
+          "You can use the main navigation to explore my career, view projects I have worked on, learn about my business interests, read articles and get in touch."
+        ]
+      },
+      {
+        heading: "What you can find here",
+        text: [
+          "The Career section sets out my professional background and ongoing development. The Business section covers work and services outside my main employment, while Projects highlights practical things I have built or developed.",
+          "Articles gives me a separate space for longer pieces of writing. Each article is presented in this book-style reader so it can be read in short pages rather than one long block of text."
+        ]
+      },
+      {
+        heading: "How the site is designed",
+        text: [
+          "The site is kept simple and lightweight. It is designed to work across desktop, tablet and mobile screens without requiring an account or special software.",
+          "Accessibility controls are available in the header. They let you change text size, use a colourblind-friendly mode, underline links, reduce motion and strengthen focus outlines."
+        ]
+      },
+      {
+        heading: "Why it exists",
+        text: [
+          "The aim is to keep one clear, up-to-date place for my work and interests. Instead of separating everything across different profiles, this site gives each area its own section while keeping the overall experience consistent.",
+          "I will continue adding projects, articles and other material as the site develops."
+        ]
+      }
+    ]
+  }
+};
+
+let articleReaderKeyHandler = null;
+
+function articleCoverHtml(book){
+  return `
+    <div class="article-reader-page article-reader-cover" aria-label="Cover of ${book.title}">
+      <span class="article-book-kicker">Adrian Headley</span>
+      <span class="article-book-rule" aria-hidden="true"></span>
+      <h2 class="article-book-title" id="modal-title">${book.title}</h2>
+      <span class="article-book-subtitle">${book.subtitle || ""}</span>
+    </div>`;
+}
+
+function articlePageHtml(book,page,index){
+  const paragraphs=(page.text||[]).map(text=>`<p>${text}</p>`).join("");
+  return `
+    <article class="article-reader-page article-reader-paper">
+      <p class="reader-section-label">${book.title} · Page ${index}</p>
+      <h2 id="modal-title">${page.heading}</h2>
+      ${paragraphs}
+    </article>`;
+}
+
+function getBookShareUrl(bookId,pageIndex){
+  const inPages=document.body.getAttribute("data-in-pages")==="true";
+  const isWeb=window.location.protocol==="https:"||window.location.protocol==="http:";
+  const isLocalHost=window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1"||window.location.hostname==="0.0.0.0";
+  const url=(isWeb&&!isLocalHost)
+    ? new URL(inPages ? "articles.html" : "Pages/articles.html",window.location.href)
+    : new URL("https://www.adrianheadley.com/Pages/articles.html");
+  url.search="";
+  url.hash="";
+  url.searchParams.set("book",bookId);
+  url.searchParams.set("page",pageIndex===0 ? "cover" : String(pageIndex));
+  return url.toString();
+}
+
+function copyTextFallback(text){
+  const input=document.createElement("textarea");
+  input.value=text;
+  input.setAttribute("readonly","");
+  input.style.position="fixed";
+  input.style.left="-9999px";
+  input.style.opacity="0";
+  document.body.appendChild(input);
+  input.focus();
+  input.select();
+  let copied=false;
+  try{copied=document.execCommand("copy");}catch(_error){copied=false;}
+  input.remove();
+  return copied;
+}
+
+function parseBookPage(rawValue,book){
+  if(!rawValue||rawValue.toLowerCase()==="cover")return 0;
+  const page=Number.parseInt(rawValue,10);
+  if(!Number.isFinite(page))return 0;
+  return Math.max(0,Math.min(book.pages.length,page));
+}
+
+function openBookReader(bookId,options={}){
+  const book=articleBooks[bookId];
+  if(!book)return;
+  let current=Math.max(0,Math.min(book.pages.length,Number(options.startPage)||0));
+  const total=book.pages.length+1;
+
+  const modal=getModalElements();
+  const panel=modal.backdrop ? modal.backdrop.querySelector(".overlay-panel") : null;
+  if(modal.backdrop){
+    modal.backdrop.classList.add("article-reader-backdrop");
+    modal.backdrop.dataset.modalMode="article-reader";
+  }
+  if(panel)panel.classList.add("article-reader-panel");
+
+  openModal(()=>`
+    <div class="article-reader-shell">
+      <div class="article-reader-stage">
+        <button type="button" class="article-reader-arrow" data-reader-prev aria-label="Previous page">‹</button>
+        <div data-reader-page></div>
+        <button type="button" class="article-reader-arrow" data-reader-next aria-label="Next page">›</button>
+      </div>
+      <div class="article-reader-progress" data-reader-progress aria-live="polite"></div>
+      <p class="article-reader-hint">Use the arrows or your keyboard to move between pages.</p>
+    </div>
+  `);
+
+  const pageHost=document.querySelector("[data-reader-page]");
+  const progress=document.querySelector("[data-reader-progress]");
+  const prev=document.querySelector("[data-reader-prev]");
+  const next=document.querySelector("[data-reader-next]");
+  if(!pageHost||!progress||!prev||!next)return;
+
+  let shareButton=panel ? panel.querySelector(".article-reader-share") : null;
+  if(panel&&!shareButton){
+    shareButton=document.createElement("button");
+    shareButton.type="button";
+    shareButton.className="article-reader-share";
+    shareButton.textContent="Share";
+    panel.appendChild(shareButton);
+  }
+
+  const render=()=>{
+    pageHost.innerHTML=current===0
+      ? articleCoverHtml(book)
+      : articlePageHtml(book,book.pages[current-1],current);
+    prev.disabled=current===0;
+    next.disabled=current===total-1;
+    progress.textContent=current===0 ? `Cover · ${book.pages.length} pages` : `Page ${current} of ${book.pages.length}`;
+    if(shareButton){
+      const pageName=current===0 ? "cover" : `page ${current}`;
+      shareButton.setAttribute("aria-label",`Share ${book.title}, ${pageName}`);
+      shareButton.title=`Share ${pageName}`;
+    }
+  };
+
+  if(shareButton){
+    shareButton.addEventListener("click",async()=>{
+      const shareUrl=getBookShareUrl(bookId,current);
+      const original=shareButton.textContent;
+      let copied=false;
+
+      try{
+        if(navigator.clipboard&&window.isSecureContext){
+          await navigator.clipboard.writeText(shareUrl);
+          copied=true;
+        }
+      }catch(_error){
+        copied=false;
+      }
+
+      if(!copied){
+        copied=copyTextFallback(shareUrl);
+      }
+
+      shareButton.textContent=copied ? "Link copied" : "Copy link";
+      if(copied){
+        window.setTimeout(()=>{
+          if(shareButton&&shareButton.isConnected)shareButton.textContent=original;
+        },1600);
+      }else{
+        shareButton.dataset.shareUrl=shareUrl;
+        shareButton.title=shareUrl;
+        window.setTimeout(()=>{
+          if(shareButton&&shareButton.isConnected)shareButton.textContent=original;
+        },2200);
+      }
+    });
+  }
+
+  prev.addEventListener("click",()=>{if(current>0){current-=1;render();}});
+  next.addEventListener("click",()=>{if(current<total-1){current+=1;render();}});
+
+  if(articleReaderKeyHandler){document.removeEventListener("keydown",articleReaderKeyHandler);}
+  articleReaderKeyHandler=(event)=>{
+    const backdrop=document.getElementById("modal-backdrop");
+    if(!backdrop||backdrop.hidden)return;
+    if(event.key==="ArrowLeft"&&current>0){event.preventDefault();current-=1;render();}
+    if(event.key==="ArrowRight"&&current<total-1){event.preventDefault();current+=1;render();}
+  };
+  document.addEventListener("keydown",articleReaderKeyHandler);
+  render();
+}
+
+function initArticleBooks(){
+  document.querySelectorAll("[data-book-id]").forEach(book=>{
+    book.addEventListener("click",event=>{
+      event.preventDefault();
+      openBookReader(book.dataset.bookId);
+    });
+  });
+}
+
+function openBookFromUrl(){
+  const params=new URLSearchParams(window.location.search);
+  const bookId=params.get("book");
+  const book=articleBooks[bookId];
+  if(!book)return;
+  const startPage=parseBookPage(params.get("page"),book);
+  openBookReader(bookId,{startPage});
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  initArticleBooks();
+  openBookFromUrl();
+});
+
+
+/* Project case studies */
+const projectCaseStudies={
+  tools:{
+    title:"Tools",
+    summary:"A collection of browser tools I built to keep everyday jobs quick, simple and private.",
+    body:`
+      <section class="case-study-intro" aria-label="Tools overview">
+        <h3>Why I built it</h3>
+        <p>I kept finding myself using a different website for every small job. Resize an image, compare some text, generate a QR code, split a PDF, check metadata. None of these things should take much effort.</p>
+        <p>Tools is my answer to that. I wanted one place I could open, get the job done and move on, without accounts, clutter or unnecessary steps.</p>
+      </section>
+
+      <section class="case-study-section">
+        <span class="case-study-number">01</span>
+        <h3>Privacy was important from the start</h3>
+        <p>Where something can be processed in the browser, that is how I prefer to do it. A simple task should not mean uploading a personal file to another server if it does not need to leave your device.</p>
+      </section>
+
+      <section class="case-study-section">
+        <span class="case-study-number">02</span>
+        <h3>What is there</h3>
+        <div class="case-study-simple-grid">
+          <div>
+            <h4>Text and data</h4>
+            <p>Word counting, case conversion, find and replace, text comparison and converters.</p>
+          </div>
+          <div>
+            <h4>Files and media</h4>
+            <p>PDF utilities, image tools, metadata tools, compression and conversion.</p>
+          </div>
+          <div>
+            <h4>Security</h4>
+            <p>Encryption, hashing, password utilities and other privacy-focused tools.</p>
+          </div>
+          <div>
+            <h4>Everyday jobs</h4>
+            <p>QR codes, barcodes, date and time tools, and other things I regularly find useful.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-study-section">
+        <span class="case-study-number">03</span>
+        <h3>How I keep it</h3>
+        <p>The site uses a lightweight HTML, CSS and JavaScript front end. I keep the layout consistent so new tools can be added without making the site harder to use. It is a project I expect to keep expanding whenever I find another genuinely useful tool to add.</p>
+      </section>
+
+      <div class="case-study-visit">
+        <a class="btn primary-btn" href="https://tools.adrianheadley.com/" target="_blank" rel="noopener noreferrer">Visit Tools</a>
+      </div>`
+  },
+  "orthodox-calendar":{
+    title:"Orthodox Calendar and Study Bible",
+    summary:"A single place for the Greek and Russian Orthodox calendars, daily readings and the Orthodox Study Bible.",
+    body:`
+      <section class="case-study-intro" aria-label="Orthodox Calendar and Study Bible overview">
+        <h3>Why I built it</h3>
+        <p>This started as separate calendar projects. I wanted a cleaner way to check the day without jumping between different sites and sources, so I eventually brought the Greek and Russian calendars together.</p>
+        <p>The Study Bible grew from the same idea. The calendar gives the day its context, and the reader gives somewhere to continue reading without leaving the site.</p>
+      </section>
+
+      <section class="case-study-section">
+        <span class="case-study-number">01</span>
+        <h3>The daily calendar</h3>
+        <p>The calendar brings together commemorations, fasting guidance, feast days and scripture readings. Greek and Russian views remain separate where they need to be, while the overall design and controls stay familiar.</p>
+      </section>
+
+      <section class="case-study-section">
+        <span class="case-study-number">02</span>
+        <h3>The reading side</h3>
+        <div class="case-study-simple-grid">
+          <div>
+            <h4>Study Bible</h4>
+            <p>A dedicated reading room for the Orthodox Study Bible, with book and chapter navigation.</p>
+          </div>
+          <div>
+            <h4>Daily scripture</h4>
+            <p>Readings sit alongside the calendar so the day can be followed from one place.</p>
+          </div>
+          <div>
+            <h4>Language</h4>
+            <p>The calendar can stay in the selected language as you move between dates and content.</p>
+          </div>
+          <div>
+            <h4>Read aloud</h4>
+            <p>Optional speech controls make prayers and scripture easier to listen to as well as read.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-study-section">
+        <span class="case-study-number">03</span>
+        <h3>What I wanted from it</h3>
+        <p>I have tried to keep the site calm and straightforward. There is quite a lot of information behind each day, but it should still feel easy to open, find what you need and read without the interface getting in the way.</p>
+      </section>
+
+      <div class="case-study-visit">
+        <a class="btn primary-btn" href="https://riyyst.github.io/Orthodox-Calendars/index.html" target="_blank" rel="noopener noreferrer">Visit Orthodox Calendars</a>
+      </div>`
+  },
+  churchfinder:{
+    title:"ChurchFinder",
+    summary:"A UK church discovery project built around useful information, maps and simple search.",
+    body:`
+      <section class="case-study-intro" aria-label="ChurchFinder overview">
+        <h3>Why I started it</h3>
+        <p>Finding a church can be surprisingly awkward. Useful information is often spread across maps, parish websites, social media pages and directories, and some of it can be out of date.</p>
+        <p>I started ChurchFinder to bring the basics into one place and make it easier to discover churches whether you are local, travelling, or looking somewhere new.</p>
+      </section>
+
+      <section class="case-study-section">
+        <span class="case-study-number">01</span>
+        <h3>What matters most</h3>
+        <p>The project is centred on search and maps, but the useful part is the information behind each result. Denomination, address, service times, accessibility, photos and other practical details should be easy to find before somebody decides to visit.</p>
+      </section>
+
+      <section class="case-study-section">
+        <span class="case-study-number">02</span>
+        <h3>Where I want it to go</h3>
+        <div class="case-study-simple-grid">
+          <div>
+            <h4>Better discovery</h4>
+            <p>Search by place and browse churches visually on a map instead of relying on a long directory.</p>
+          </div>
+          <div>
+            <h4>Useful profiles</h4>
+            <p>Give each church enough practical information to help somebody decide whether it is worth a visit.</p>
+          </div>
+          <div>
+            <h4>Accurate information</h4>
+            <p>Allow churches to take ownership of their page and keep important details up to date.</p>
+          </div>
+          <div>
+            <h4>Room to grow</h4>
+            <p>Build the core properly first, then add things such as saved churches, events and other useful features.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-study-section">
+        <span class="case-study-number">03</span>
+        <h3>Still a work in progress</h3>
+        <p>ChurchFinder is the earliest-stage project of the three. I am deliberately building it in stages because the usefulness of the site will depend on good data and a simple experience, rather than adding features for the sake of it.</p>
+      </section>
+
+      <div class="case-study-visit">
+        <a class="btn primary-btn" href="https://ChurchFinder.uk" target="_blank" rel="noopener noreferrer">Visit ChurchFinder.uk</a>
+      </div>`
+  }
+};
+
+function openProjectCaseStudy(projectId){
+  const project=projectCaseStudies[projectId];
+  if(!project)return;
+  openModal(()=>`
+    <div class="overlay-header project-case-study-header">
+      <span class="case-study-eyebrow">Project case study</span>
+      <h2 id="modal-title">${project.title}</h2>
+      <p>${project.summary}</p>
+    </div>
+    <div class="overlay-body project-case-study-body">
+      ${project.body}
+    </div>
+  `);
+}
+
+function initProjectCaseStudies(){
+  document.querySelectorAll("[data-project-case-study]").forEach(card=>{
+    const open=()=>openProjectCaseStudy(card.dataset.projectCaseStudy);
+    card.addEventListener("click",event=>{
+      if(event.target.closest("a,button"))return;
+      open();
+    });
+    card.addEventListener("keydown",event=>{
+      if(event.target.closest("a,button"))return;
+      if(event.key==="Enter"||event.key===" "){
+        event.preventDefault();
+        open();
+      }
+    });
+  });
+}
+
+function openProjectCaseStudyFromUrl(){
+  const params=new URLSearchParams(window.location.search);
+  const projectId=params.get("project");
+  if(projectId&&projectCaseStudies[projectId])openProjectCaseStudy(projectId);
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  initProjectCaseStudies();
+  openProjectCaseStudyFromUrl();
+});
+
+
+/* === Site-wide search === */
+const siteSearchCertifications = [{"title": "Business Administrator Diploma", "category": "Diplomas"}, {"title": "Leadership and Followership", "category": "Business"}, {"title": "Effective Communication in the Workplace", "category": "Business"}, {"title": "Working in Teams", "category": "Business"}, {"title": "Developing Career Resilience", "category": "Business"}, {"title": "Diversity and Inclusion in the Workplace", "category": "Business"}, {"title": "Succeed in the Workplace", "category": "Education & Development"}, {"title": "Becoming an Ethical Researcher", "category": "Education & Development"}, {"title": "Cyber Fundamentals", "category": "IT Career Paths"}, {"title": "Technical Fundamentals", "category": "IT Career Paths"}, {"title": "Security Hygiene", "category": "IT Career Paths"}, {"title": "Management, Risk, and Compliance", "category": "IT Career Paths"}, {"title": "Windows Concepts", "category": "IT Fundamentals"}, {"title": "Windows Basics", "category": "IT Fundamentals"}, {"title": "Networking", "category": "IT Fundamentals"}, {"title": "Introduction to Networking", "category": "IT Fundamentals"}, {"title": "Linux Command Line", "category": "IT Fundamentals"}, {"title": "Introduction to Cryptography", "category": "IT Fundamentals"}, {"title": "Modern Encryption", "category": "IT Fundamentals"}, {"title": "Historic Encryption", "category": "IT Fundamentals"}, {"title": "Encoding", "category": "IT Fundamentals"}, {"title": "Ethics & Laws", "category": "IT Fundamentals"}, {"title": "Cyber 101", "category": "IT Fundamentals"}, {"title": "Social Engineering", "category": "IT Fundamentals"}, {"title": "Data Handling", "category": "IT Fundamentals"}, {"title": "Browsing Securely", "category": "IT Fundamentals"}, {"title": "Cyber Safety", "category": "IT Fundamentals"}, {"title": "Physical Security", "category": "IT Fundamentals"}, {"title": "Digital Footprint", "category": "IT Fundamentals"}, {"title": "Staying Safe Online", "category": "IT Fundamentals"}, {"title": "Introduction to Penetration Testing", "category": "Offensive Cyber"}, {"title": "Introduction to Penetration Test Programs", "category": "Offensive Cyber"}, {"title": "Introducing the Cyber Kill Chain", "category": "Offensive Cyber"}, {"title": "Active Directory Basics", "category": "Offensive Cyber"}, {"title": "Vulnerability Management", "category": "Defensive Cyber"}, {"title": "Threat Hunting - Theory", "category": "Defensive Cyber"}, {"title": "Introduction to Digital Forensics", "category": "Defensive Cyber"}, {"title": "Security Reporting and Responsiveness", "category": "Defensive Cyber"}, {"title": "Device Security", "category": "Defensive Cyber"}, {"title": "Range Exercise Prep: Artica Defensive – Investigation Fundamentals", "category": "Defensive Cyber"}, {"title": "Security Headers", "category": "Application Security"}, {"title": "Git Security", "category": "Application Security"}, {"title": "Authentication", "category": "Application Security"}, {"title": "Secure Fundamentals", "category": "Application Security"}, {"title": "CISA and NSA Kubernetes Hardening Guidance", "category": "Cloud Security"}, {"title": "Zero Trust in the Cloud", "category": "Cloud Security"}, {"title": "AI Fundamentals", "category": "Artificial Intelligence"}, {"title": "AI Foundations", "category": "Artificial Intelligence"}, {"title": "AI for Business", "category": "Artificial Intelligence"}, {"title": "Business Impact Analysis", "category": "Crisis Management"}, {"title": "Business Continuity 101", "category": "Crisis Management"}, {"title": "Crisis Management 101", "category": "Crisis Management"}, {"title": "NIST – Security and Privacy Controls for Information Systems and Organizations (800-53)", "category": "Management, Risk & Compliance"}, {"title": "NCSC - Cloud Security Guidance", "category": "Management, Risk & Compliance"}, {"title": "MITRE ATT&CK", "category": "Management, Risk & Compliance"}, {"title": "Cyber for Board Members", "category": "Management, Risk & Compliance"}, {"title": "Cyber for Executives", "category": "Management, Risk & Compliance"}, {"title": "Risk", "category": "Management, Risk & Compliance"}, {"title": "Compliance", "category": "Management, Risk & Compliance"}, {"title": "Data Privacy", "category": "Management, Risk & Compliance"}, {"title": "NIST – Guidelines on Security and Privacy in Public Cloud Computing (800-144)", "category": "Management, Risk & Compliance"}, {"title": "Human Factors in Cybersecurity", "category": "Management, Risk & Compliance"}, {"title": "OWASP Top 10", "category": "Management, Risk & Compliance"}, {"title": "ISO 22381 - Security and Resilience for Identification Systems", "category": "Management, Risk & Compliance"}, {"title": "ISO 27001 - Information Security Management Systems", "category": "Management, Risk & Compliance"}, {"title": "ISO 27014 - Governance of Information Security", "category": "Management, Risk & Compliance"}, {"title": "ISO 27018 - Protecting Private Data in Public Clouds", "category": "Management, Risk & Compliance"}, {"title": "ISO 28000 - Security Management Systems for Supply Chains", "category": "Management, Risk & Compliance"}, {"title": "ISO 31000 - Risk Management", "category": "Management, Risk & Compliance"}, {"title": "Range Exercise Prep: Op. Palisade – Investigation Fundamentals", "category": "Challenges & Scenarios"}];
+
+const siteSearchBaseIndex = [
+  {title:"Home",type:"Page",description:"Homepage, featured projects and latest article.",path:"index.html",keywords:"welcome portfolio Adrian Headley"},
+  {title:"Career",type:"Page",description:"Professional roles, experience, qualifications and career development.",path:"Pages/professional.html",keywords:"professional career CV employment NHS IT recruitment law"},
+  {title:"Business",type:"Page",description:"AH Consultancy and my business work.",path:"Pages/business.html",keywords:"consultancy operations technology workflows business"},
+  {title:"Projects",type:"Page",description:"Projects I am building and developing.",path:"Pages/projects.html",keywords:"code software websites tools churchfinder orthodox calendar"},
+  {title:"Articles",type:"Page",description:"My articles and longer-form writing.",path:"Pages/articles.html",keywords:"writing books reading articles"},
+  {title:"Contact",type:"Page",description:"Get in touch with me.",path:"Pages/contact.html",keywords:"email message contact enquiry"},
+  {title:"Adrian Headley Digital Business Card",type:"Contact",description:"Interactive personal business card with contact details, email and website links.",path:"Pages/card-personal.html",keywords:"digital business card Adrian Headley contact QR email website"},
+  {title:"AH Consultancy Digital Business Card",type:"Business",description:"Interactive AH Consultancy business card with contact details, email and website links.",path:"Pages/card-consultancy.html",keywords:"digital business card consultancy contact QR email website"},
+  {title:"My CV",type:"Career",description:"View my full CV.",path:"Pages/professional.html?focus=full%20CV",keywords:"curriculum vitae resume experience employment qualifications"},
+
+  {title:"Tools",type:"Project",description:"Privacy-focused browser tools for useful everyday tasks.",path:"Pages/projects.html?project=tools",keywords:"HTML CSS JavaScript privacy PDF image QR encryption hashing utilities"},
+  {title:"Orthodox Calendar and Study Bible",type:"Project",description:"Greek and Russian Orthodox calendars with scripture and a Study Bible reader.",path:"Pages/projects.html?project=orthodox-calendar",keywords:"orthodox Greek Russian calendar bible scripture liturgy prayers study"},
+  {title:"ChurchFinder",type:"Project",description:"A UK church discovery project built around maps, search and useful information.",path:"Pages/projects.html?project=churchfinder",keywords:"church finder map denomination services accessibility UK"},
+
+  {title:"What is this website?",type:"Article",description:"A short introduction to this website and what you can find here.",path:"Pages/articles.html?book=what-is-this-website&page=cover",keywords:"article introduction website portfolio purpose"},
+
+  {title:"Medical Staffing & Recruitment Officer",type:"Career",description:"Current work coordinating recruitment, onboarding and workforce processes.",path:"Pages/professional.html?focus=Medical%20Staffing%20%26%20Recruitment%20Officer",keywords:"NHS recruitment onboarding payroll rota employment law immigration medical staffing"},
+  {title:"IT Lead",type:"Career",description:"Current responsibility for digital operations, system changes, data services and compliance.",path:"Pages/professional.html?focus=IT%20Lead",keywords:"digital operations change management security compliance data services IT"},
+  {title:"IT Officer",type:"Career",description:"IT infrastructure, systems, security and operational support.",path:"Pages/professional.html?focus=IT%20Officer",keywords:"IT infrastructure networking cybersecurity systems support"},
+  {title:"IT and Network Support",type:"Career",description:"Second-line support, networking and systems administration.",path:"Pages/professional.html?focus=IT%20and%20Network%20Support",keywords:"network support systems administration second line IT"},
+  {title:"IT and Communications Support",type:"Career",description:"IT support, communications and change coordination.",path:"Pages/professional.html?focus=IT%20and%20Communications%20Support",keywords:"communications IT support infrastructure staff change"},
+  {title:"Bachelor of Laws (LLB)",type:"Education",description:"Ongoing law degree alongside professional work.",path:"Pages/professional.html?focus=Bachelor%20of%20Laws%20(LLB)",keywords:"law degree LLB legal research governance regulation university study"},
+
+  {title:"AH Consultancy",type:"Business",description:"My consultancy focused on technology, workflows and operations.",path:"Pages/business.html",keywords:"consulting consultancy IT systems processes operations workflows"}
+];
+
+const siteSearchIndex = siteSearchBaseIndex.concat(
+  siteSearchCertifications.map(item => ({
+    title:item.title,
+    type:"Certification",
+    description:item.category + " qualification or learning badge.",
+    path:"Pages/professional.html?focus=" + encodeURIComponent(item.title),
+    keywords:item.category + " badge certificate certification training learning"
+  }))
+);
+
+function siteSearchNormalise(value){
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/&/g," and ")
+    .replace(/[^a-z0-9]+/g," ")
+    .trim();
+}
+
+function siteSearchRootUrl(){
+  const inPages = /\/Pages\//i.test(window.location.pathname);
+  return new URL(inPages ? "../" : "./", window.location.href);
+}
+
+function siteSearchResolve(path){
+  return new URL(path,siteSearchRootUrl()).toString();
+}
+
+function siteSearchScore(item,query){
+  const q=siteSearchNormalise(query);
+  if(!q)return 0;
+  const title=siteSearchNormalise(item.title);
+  const description=siteSearchNormalise(item.description);
+  const type=siteSearchNormalise(item.type);
+  const keywords=siteSearchNormalise(item.keywords);
+  const haystack=`${title} ${description} ${type} ${keywords}`;
+  const words=q.split(/\s+/).filter(Boolean);
+  if(!words.every(word=>haystack.includes(word)))return 0;
+
+  let score=words.length*8;
+  if(title===q)score+=120;
+  else if(title.startsWith(q))score+=85;
+  else if(title.includes(q))score+=60;
+  if(haystack.includes(q))score+=25;
+  words.forEach(word=>{
+    if(title.split(" ").some(part=>part.startsWith(word)))score+=8;
+    if(type.includes(word))score+=3;
+  });
+  return score;
+}
+
+function siteSearchResults(query){
+  return siteSearchIndex
+    .map((item,index)=>({item,index,score:siteSearchScore(item,query)}))
+    .filter(result=>result.score>0)
+    .sort((a,b)=>b.score-a.score || a.index-b.index)
+    .slice(0,10)
+    .map(result=>result.item);
+}
+
+function createSiteSearch(){
+  if(document.querySelector(".site-search-trigger"))return;
+
+  const trigger=document.createElement("button");
+  trigger.type="button";
+  trigger.className="site-search-trigger";
+  trigger.setAttribute("aria-label","Search this website");
+  trigger.setAttribute("title","Search (Ctrl + K)");
+  trigger.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.2 4.2"></path></svg>`;
+
+  const headerActions=document.querySelector(".header-actions");
+  if(!headerActions)return;
+  headerActions.insertBefore(trigger,headerActions.firstChild);
+
+  const backdrop=document.createElement("div");
+  backdrop.className="site-search-backdrop";
+  backdrop.hidden=true;
+  backdrop.innerHTML=`
+    <section class="site-search-panel" role="dialog" aria-modal="true" aria-labelledby="site-search-title">
+      <h2 id="site-search-title" class="sr-only">Search this website</h2>
+      <div class="site-search-input-row">
+        <svg class="site-search-input-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4.2 4.2"></path></svg>
+        <input class="site-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search articles, projects, career..." aria-label="Search this website">
+        <span class="site-search-shortcut" aria-hidden="true">Ctrl K</span>
+        <button type="button" class="site-search-close" aria-label="Close search">×</button>
+      </div>
+      <div class="site-search-results" role="listbox" aria-label="Search results"></div>
+      <div class="site-search-footer"><span>↑ ↓ to move</span><span>Enter to open</span><span>Esc to close</span></div>
+    </section>`;
+  document.body.appendChild(backdrop);
+
+  const input=backdrop.querySelector(".site-search-input");
+  const resultsHost=backdrop.querySelector(".site-search-results");
+  const closeButton=backdrop.querySelector(".site-search-close");
+  let activeIndex=0;
+  let resultLinks=[];
+  let lastFocused=null;
+
+  function quickLinks(){
+    return siteSearchBaseIndex.filter(item=>item.type==="Page").slice(0,6);
+  }
+
+  function render(query){
+    const clean=query.trim();
+    const results=clean ? siteSearchResults(clean) : quickLinks();
+    activeIndex=0;
+
+    if(!results.length){
+      resultsHost.innerHTML=`<div class="site-search-empty"><strong>No results found</strong><span>Try a different word or shorter phrase.</span></div>`;
+      resultLinks=[];
+      return;
+    }
+
+    const heading=clean ? `${results.length} result${results.length===1?"":"s"}` : "Quick links";
+    resultsHost.innerHTML=`<p class="site-search-results-label">${heading}</p>` + results.map((item,index)=>`
+      <a class="site-search-result${index===0?" is-active":""}" role="option" aria-selected="${index===0?"true":"false"}" data-search-result href="${siteSearchResolve(item.path)}">
+        <span class="site-search-result-main">
+          <strong>${item.title}</strong>
+          <span>${item.description}</span>
+        </span>
+        <span class="site-search-result-type">${item.type}</span>
+      </a>`).join("");
+    resultLinks=Array.from(resultsHost.querySelectorAll("[data-search-result]"));
+  }
+
+  function setActive(index){
+    if(!resultLinks.length)return;
+    activeIndex=(index+resultLinks.length)%resultLinks.length;
+    resultLinks.forEach((link,i)=>{
+      const active=i===activeIndex;
+      link.classList.toggle("is-active",active);
+      link.setAttribute("aria-selected",active?"true":"false");
+    });
+    resultLinks[activeIndex].scrollIntoView({block:"nearest"});
+  }
+
+  function openSearch(){
+    lastFocused=document.activeElement;
+    backdrop.hidden=false;
+    document.body.classList.add("site-search-open");
+    input.value="";
+    render("");
+    window.setTimeout(()=>input.focus(),20);
+  }
+
+  function closeSearch(){
+    if(backdrop.hidden)return;
+    backdrop.hidden=true;
+    document.body.classList.remove("site-search-open");
+    if(lastFocused&&typeof lastFocused.focus==="function")lastFocused.focus();
+  }
+
+  trigger.addEventListener("click",openSearch);
+  closeButton.addEventListener("click",closeSearch);
+  backdrop.addEventListener("mousedown",event=>{
+    if(event.target===backdrop)closeSearch();
+  });
+  input.addEventListener("input",()=>render(input.value));
+  resultsHost.addEventListener("mousemove",event=>{
+    const link=event.target.closest("[data-search-result]");
+    if(!link)return;
+    const index=resultLinks.indexOf(link);
+    if(index>=0)setActive(index);
+  });
+
+  document.addEventListener("keydown",event=>{
+    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="k"){
+      event.preventDefault();
+      backdrop.hidden ? openSearch() : input.focus();
+      return;
+    }
+    if(backdrop.hidden)return;
+    if(event.key==="Escape"){event.preventDefault();closeSearch();return;}
+    if(event.key==="ArrowDown"){event.preventDefault();setActive(activeIndex+1);return;}
+    if(event.key==="ArrowUp"){event.preventDefault();setActive(activeIndex-1);return;}
+    if(event.key==="Enter"&&document.activeElement===input&&resultLinks.length){
+      event.preventDefault();
+      resultLinks[activeIndex].click();
+    }
+  });
+}
+
+function initSearchFocus(){
+  const params=new URLSearchParams(window.location.search);
+  const focus=params.get("focus");
+  if(!focus)return;
+  const wanted=siteSearchNormalise(focus);
+  window.setTimeout(()=>{
+    const candidates=Array.from(document.querySelectorAll(".timeline-item, .badge-link[title], [data-title], .cv-modal-trigger"));
+    const target=candidates.find(el=>{
+      const text=el.getAttribute("title")||el.getAttribute("data-title")||el.textContent||"";
+      return siteSearchNormalise(text).includes(wanted);
+    });
+    if(!target)return;
+    target.scrollIntoView({behavior:"smooth",block:"center",inline:"center"});
+    target.classList.add("site-search-focus-highlight");
+    if(typeof target.focus==="function"){
+      if(!target.hasAttribute("tabindex")&&target.tagName!=="A"&&target.tagName!=="BUTTON")target.setAttribute("tabindex","-1");
+      target.focus({preventScroll:true});
+    }
+    window.setTimeout(()=>target.classList.remove("site-search-focus-highlight"),2200);
+  },120);
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  createSiteSearch();
+  initSearchFocus();
+});
