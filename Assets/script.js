@@ -530,6 +530,73 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 /* === Book-style Articles reader === */
 const articleBooks = {
+  "time-is-money": {
+    title: "Time Is Money",
+    subtitle: "Every Second Your Site Wastes Costs You Sales",
+    category: "Business Articles",
+    pages: [
+      {
+        heading: "The measurable cost of speed",
+        html: [
+          "You have probably heard the phrase ‘time is money’, but in e-commerce it&#x27;s not just a saying, it is a measurable reality backed by data from major research programmes.",
+          "In the study <a href=\"https://www.deloitte.com/ie/en/services/consulting/research/milliseconds-make-millions.html\" target=\"_blank\" rel=\"noopener noreferrer\">Milliseconds Make Millions</a>, commissioned by Google and conducted by Deloitte and analytics firm fifty-five, researchers analysed more than 30 million mobile user sessions across 37 retail, travel, luxury and lead-generation brands in Europe and the United States.",
+          "They found that a natural 0.1-second improvement in mobile site speed was associated with an 8.4% increase in retail conversion rate and a 9.2% increase in average order value, with similar gains in travel and lead-generation funnels. The same report breaks down where speed matters most in the journey."
+        ]
+      },
+      {
+        heading: "Where speed matters most",
+        html: [
+          "A 0.1-second improvement produced a 3.2% increase in progression from product listing pages to product detail pages and a 9.1% increase from product detail pages to add-to-basket pages.",
+          "In other words, the benefit compounds exactly at the points where most e-commerce sites lose volume. Google’s own web.dev case study summarising this research presents the same findings for developers and performance practitioners.",
+          "A separate large-scale study from Akamai, <a href=\"https://www.ir.akamai.com/news-releases/news-release-details/akamai-online-retail-performance-report-milliseconds-are\" target=\"_blank\" rel=\"noopener noreferrer\">the State of Online Retail Performance</a>, looked at performance data from roughly 10 billion user visits to leading retail sites. Akamai’s analysis found that a 100-millisecond delay in page load can hurt conversion rates by about 7%, and that a two-second delay can increase bounce rates by over 100%. Their summary makes the point clear."
+        ]
+      },
+      {
+        html: [
+          "Even 100-millisecond delays can impact customer engagement and online revenue, and 53% of mobile visitors leave a page that takes longer than three seconds to load. Google’s own mobile speed research reaches the same conclusions.",
+          "In its DoubleClick mobile web speed work, presented in the <a href=\"https://www.thinkwithgoogle.com/_qs/documents/3702/9e6a3_DoubleClick_Mobile_Web_Speed_Toolkit_10_17_2016.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Get your mobile site in shape toolkit</a>, Google reports that 53% of mobile site visits are abandoned if a page takes longer than three seconds to load. The toolkit ties load time directly to commercial outcomes and encourages site owners to measure and improve mobile performance as part of their broader business strategy."
+        ]
+      },
+      {
+        heading: "What the research says together",
+        html: [
+          "With all the research put together, these studies tell a consistent story. Even small changes in load times are associated with noticeable differences in how many visitors progress, and how much they spend when they do.",
+          "Once pages cross roughly three seconds on mobile, abandonment rises sharply, and every extra second becomes a tangible commercial cost. None of this is based on anecdote. It comes from large-scale measurements of real sessions, monitored hour by hour across many brands and industries.",
+          "The human side is straightforward. People don&#x27;t arrive on a website to admire its structure and layout, but rather to complete a task, often on a phone with a variable connection. If the path to that task is smooth and quick, they are more likely to finish it and remember the experience positively."
+        ]
+      },
+      {
+        heading: "The human side of performance",
+        html: [
+          "If it is slow or uneven, many will leave, and the business never sees the revenue that might have followed. This is why Google’s own guidance now treats mobile speed, Core Web Vitals and abandonment as part of the same conversation. Performance is both a user-experience issue and a commercial one.",
+          "It is worth asking why those few seconds matter so much. People shopping online are not always in a rush, and many browse on the sofa or idly scroll during a commute. The problem is less about absolute time and more about expectation and perception.",
+          "Google’s <a href=\"https://www.marketingdive.com/news/google-53-of-mobile-users-abandon-sites-that-take-over-3-seconds-to-load/426070/\" target=\"_blank\" rel=\"noopener noreferrer\">mobile performance work</a> reports that around 53% of mobile visitors abandon a site that takes more than three seconds to load, and that pages loading in nineteen seconds on typical 3G connections see dramatically higher bounce and lower engagement than pages loading in five seconds."
+        ]
+      },
+      {
+        heading: "Why waiting feels longer",
+        html: [
+          "Studies of perceived speed show that users feel waits are longer than they really are, and people experience load times as roughly 15% slower than measurement tools report, as described in SpeedCurve’s “<a href=\"https://www.speedcurve.com/blog/psychology-site-speed/\" target=\"_blank\" rel=\"noopener noreferrer\">The psychology of site speed and human happiness”</a> and Wired’s “<a href=\"https://www.wired.com/2016/08/science-waiting-waiting-page-load/\" target=\"_blank\" rel=\"noopener noreferrer\">The Science of Waiting ... for Your Page to Load</a>”.",
+          "Contrary to the popular claim that our attention spans have simply collapsed to a few seconds, there is little scientific evidence that humans now possess a fixed, eight-second window beyond which they cannot focus. What recent work suggests instead is that attention online is highly task-dependent and shaped by cognitive load, control and context."
+        ]
+      },
+      {
+        heading: "Attention, control and patience",
+        html: [
+          "Delays of more than about two seconds break concentration, increase stress responses and make users feel powerless, especially when they have many other tabs or apps to switch to, according to “<a href=\"https://wisetech.ae/it-solutions/psychology-of-loading-screens-user-patience/\" target=\"_blank\" rel=\"noopener noreferrer\">The Psychology of Loading Screens and User Patience</a>” and “<a href=\"https://medium.com/@elenech/the-psychology-of-waiting-skeletons-ca3b309e12a2\" target=\"_blank\" rel=\"noopener noreferrer\">The Psychology of Waiting: Skeletons</a>”.",
+          "On mobile, where connections are more variable and usage is often fragmented into short, opportunistic windows, that effect is amplified, with surveys and performance studies consistently finding that people are less patient on phones than on a desktop and treat speed as one of the most important parts of the experience.",
+          "In that light, the “three second rule” is not arbitrary, but it does reflect the point at which waiting ceases to feel like part of the journey and starts to feel like a problem."
+        ]
+      },
+      {
+        heading: "The business question",
+        html: [
+          "For any e-commerce business, a useful question to ask is not simply ‘Is my site online?’ but ‘How much time am I asking visitors to spend waiting, and what does the best available research say that delay is costing me?’. The answer will never appear as a neat line in a profit and loss statement labelled ‘lost to slow pages’, but the impact is real.",
+          "When time is money, the seconds between a customer’s intent and your response become one of the most important parts of the business to understand."
+        ]
+      }
+    ]
+  },
   "what-is-this-website": {
     title: "What is this website?",
     subtitle: "A short introduction",
@@ -579,11 +646,13 @@ function articleCoverHtml(book){
 }
 
 function articlePageHtml(book,page,index){
-  const paragraphs=(page.text||[]).map(text=>`<p>${text}</p>`).join("");
+  const content=page.html||page.text||[];
+  const paragraphs=content.map(item=>`<p>${item}</p>`).join("");
+  const heading=page.heading ? `<h2 id="modal-title">${page.heading}</h2>` : `<h2 id="modal-title" class="sr-only">${book.title}</h2>`;
   return `
-    <article class="article-reader-page article-reader-paper">
+    <article class="article-reader-page article-reader-paper${page.heading ? "" : " article-reader-continuation"}">
       <p class="reader-section-label">${book.title} · Page ${index}</p>
-      <h2 id="modal-title">${page.heading}</h2>
+      ${heading}
       ${paragraphs}
     </article>`;
 }
@@ -965,6 +1034,7 @@ const siteSearchBaseIndex = [
   {title:"Orthodox Calendar and Study Bible",type:"Project",description:"Greek and Russian Orthodox calendars with scripture and a Study Bible reader.",path:"Pages/projects.html?project=orthodox-calendar",keywords:"orthodox Greek Russian calendar bible scripture liturgy prayers study"},
   {title:"ChurchFinder",type:"Project",description:"A UK church discovery project built around maps, search and useful information.",path:"Pages/projects.html?project=churchfinder",keywords:"church finder map denomination services accessibility UK"},
 
+  {title:"Time Is Money",type:"Article",description:"Every Second Your Site Wastes Costs You Sales. Research on website speed, conversions and customer abandonment.",path:"Pages/articles.html?book=time-is-money&page=cover",keywords:"business article ecommerce e-commerce website speed performance Core Web Vitals conversion sales bounce mobile Deloitte Google Akamai"},
   {title:"What is this website?",type:"Article",description:"A short introduction to this website and what you can find here.",path:"Pages/articles.html?book=what-is-this-website&page=cover",keywords:"article introduction website portfolio purpose"},
 
   {title:"Medical Staffing & Recruitment Officer",type:"Career",description:"Current work coordinating recruitment, onboarding and workforce processes.",path:"Pages/professional.html?focus=Medical%20Staffing%20%26%20Recruitment%20Officer",keywords:"NHS recruitment onboarding payroll rota employment law immigration medical staffing"},

@@ -511,7 +511,7 @@ body.dark-theme .footer-social-link,body.high-contrast .footer-social-link{borde
 }
 .book-library{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(190px,220px));
+  grid-template-columns:repeat(auto-fit,minmax(190px,220px));
   justify-content:center;
   gap:2rem;
   margin-top:2rem;
@@ -751,7 +751,7 @@ body.dark-theme .article-reader-panel{
   pointer-events:none;
 }
 .article-reader-paper h2{
-  margin:0 0 clamp(.25rem,.7vh,.4rem);
+  margin:0 0 clamp(.6rem,1.55vh,.9rem);
   font-size:clamp(1.08rem,2.65vh,1.55rem);
   line-height:1.2;
   color:#111827;
@@ -2447,4 +2447,66 @@ body.business-page{
 @media (max-width:620px){
   .projects-card-logo-image{width:66px;height:66px}
   .home-featured-card .projects-card-logo-image{width:56px;height:56px}
+}
+
+
+/* === Article categories and research references === */
+.article-categories{
+  margin-top:2rem;
+  display:grid;
+  gap:2.35rem;
+}
+.article-category-section{
+  width:100%;
+  margin:0;
+}
+.article-category-section + .article-category-section{
+  margin-top:0;
+  padding-top:0;
+  border-top:0;
+}
+.article-category-title{
+  margin:0 0 .9rem;
+  text-align:left;
+  font-size:.86rem;
+  line-height:1.3;
+  color:var(--text-soft);
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-weight:650;
+}
+.article-category-section .book-library{
+  margin-top:0;
+  justify-content:start;
+  justify-items:start;
+}
+.article-reader-paper a{
+  color:#1d4ed8;
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:2px;
+  font-weight:500;
+}
+.article-reader-paper a:hover,
+.article-reader-paper a:focus-visible{
+  color:#1e40af;
+}
+body.dark-theme .article-reader-paper a{
+  color:#2563eb;
+}
+.article-reader-continuation .reader-section-label{
+  margin-bottom:clamp(.7rem,1.8vh,1rem);
+}
+@media (max-width:700px){
+  .article-categories{gap:2rem;}
+  .article-category-section .book-library{
+    justify-content:start;
+    justify-items:start;
+  }
+}
+@media (max-width:420px){
+  .article-category-section .book-library{
+    justify-content:start;
+    justify-items:start;
+  }
 }
