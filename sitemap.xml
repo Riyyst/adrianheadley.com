@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://www.adrianheadley.com/</loc>
-    <lastmod>2026-09-03</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <image:image>
       <image:loc>https://www.adrianheadley.com/Assets/Media/Images/Profile/portrait.jpg</image:loc>
     </image:image>
@@ -18,14 +18,14 @@
   </url>
   <url>
     <loc>https://www.adrianheadley.com/Pages/professional.html</loc>
-    <lastmod>2026-08-28</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <image:image>
       <image:loc>https://www.adrianheadley.com/Assets/Media/Images/Profile/portrait.jpg</image:loc>
     </image:image>
   </url>
   <url>
     <loc>https://www.adrianheadley.com/Pages/business.html</loc>
-    <lastmod>2026-08-28</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <image:image>
       <image:loc>https://www.adrianheadley.com/Assets/Media/Images/Business/ahonsultancylogo.png</image:loc>
     </image:image>
@@ -35,7 +35,7 @@
   </url>
   <url>
     <loc>https://www.adrianheadley.com/Pages/projects.html</loc>
-    <lastmod>2026-08-28</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <image:image>
       <image:loc>https://www.adrianheadley.com/Assets/Media/Images/logos/tools-logo.png</image:loc>
     </image:image>
@@ -48,21 +48,21 @@
   </url>
   <url>
     <loc>https://www.adrianheadley.com/Pages/articles.html</loc>
-    <lastmod>2026-09-03</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <image:image>
       <image:loc>https://www.adrianheadley.com/Assets/Media/Images/Profile/portrait.jpg</image:loc>
     </image:image>
   </url>
   <url>
     <loc>https://www.adrianheadley.com/Pages/contact.html</loc>
-    <lastmod>2026-08-28</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <image:image>
       <image:loc>https://www.adrianheadley.com/Assets/card-personal-back-real-hq.png</image:loc>
     </image:image>
   </url>
   <url>
     <loc>https://www.adrianheadley.com/Pages/card-personal.html</loc>
-    <lastmod>2026-08-28</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <image:image>
       <image:loc>https://www.adrianheadley.com/Assets/card-personal-front-real-hq.png</image:loc>
     </image:image>
@@ -72,7 +72,7 @@
   </url>
   <url>
     <loc>https://www.adrianheadley.com/Pages/card-consultancy.html</loc>
-    <lastmod>2026-08-28</lastmod>
+    <lastmod>2026-09-24</lastmod>
     <image:image>
       <image:loc>https://www.adrianheadley.com/Assets/card-consultancy-front-real-hq.png</image:loc>
     </image:image>
@@ -80,4 +80,4 @@
       <image:loc>https://www.adrianheadley.com/Assets/card-consultancy-back-real-hq.png</image:loc>
     </image:image>
   </url>
-</urlset>
+<url><loc>https://www.adrianheadley.com/Pages/privacy.html</loc><lastmod>2026-09-24</lastmod></url><url><loc>https://www.adrianheadley.com/Pages/security.html</loc><lastmod>2026-09-24</lastmod></url><url><loc>https://www.adrianheadley.com/Pages/terms.html</loc><lastmod>2026-09-24</lastmod></url></urlset>

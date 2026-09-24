@@ -1,0 +1,5 @@
+Contact: https://www.adrianheadley.com/Pages/contact.html
+Policy: https://www.adrianheadley.com/Pages/security.html
+Canonical: https://www.adrianheadley.com/.well-known/security.txt
+Preferred-Languages: en
+Expires: 2027-09-24T23:59:59Z

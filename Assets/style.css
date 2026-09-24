@@ -2510,3 +2510,140 @@ body.dark-theme .article-reader-paper a{
     justify-items:start;
   }
 }
+
+
+/* === Portfolio trust pages and footer information links === */
+.footer-actions-right{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:1.15rem;
+  min-width:0;
+}
+.footer-policy-links{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:.35rem 1rem;
+}
+.footer-policy-links a{
+  color:var(--accent);
+  text-decoration:none;
+  font-size:.82rem;
+  font-weight:500;
+  white-space:nowrap;
+}
+.footer-policy-links a:hover,
+.footer-policy-links a:focus-visible{
+  text-decoration:underline;
+}
+.policy-page{
+  max-width:900px;
+}
+.policy-header{
+  max-width:720px;
+  margin-bottom:2rem;
+}
+.policy-eyebrow{
+  margin:0 0 .35rem;
+  color:var(--accent);
+  font-size:.74rem;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.policy-header h1{
+  margin:.05rem 0 .55rem;
+  font-size:clamp(2rem,4vw,2.65rem);
+  line-height:1.15;
+}
+.policy-lead{
+  margin:0;
+  color:var(--text-soft);
+  font-size:1rem;
+  max-width:44rem;
+}
+.policy-content{
+  max-width:760px;
+}
+.policy-section{
+  padding:1.25rem 0 1.45rem;
+  border-top:1px solid var(--border-subtle);
+}
+.policy-section:first-child{
+  border-top:none;
+  padding-top:0;
+}
+.policy-section h2{
+  margin:0 0 .55rem;
+  font-size:1.12rem;
+}
+.policy-section p{
+  margin:.45rem 0;
+  color:var(--text-soft);
+}
+.policy-section ul{
+  margin:.6rem 0 .25rem;
+  padding-left:1.25rem;
+  color:var(--text-soft);
+}
+.policy-section li+li{
+  margin-top:.35rem;
+}
+.policy-section strong{
+  color:var(--text);
+}
+.policy-updated{
+  margin-top:1rem!important;
+  font-size:.82rem;
+}
+
+/* Keep the Accessibility panel fully inside the viewport on every page. */
+.a11y-panel{
+  position:fixed!important;
+  top:4.5rem!important;
+  right:clamp(.75rem,3vw,1.5rem)!important;
+  left:auto!important;
+  width:min(320px,calc(100vw - 1.5rem))!important;
+  min-width:0!important;
+  max-width:none!important;
+  max-height:calc(100vh - 5.5rem)!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  z-index:1000!important;
+}
+@supports (height:100dvh){
+  .a11y-panel{max-height:calc(100dvh - 5.5rem)!important;}
+}
+
+@media (max-width:760px){
+  .footer-bottom{
+    align-items:center;
+  }
+  .footer-actions-right{
+    width:100%;
+    margin-left:0;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:.85rem 1rem;
+  }
+  .footer-policy-links{
+    justify-content:center;
+  }
+  .site-footer .footer-social{
+    flex:0 0 auto;
+  }
+}
+@media (max-width:480px){
+  .footer-policy-links{
+    gap:.3rem .8rem;
+  }
+  .footer-policy-links a{
+    font-size:.8rem;
+  }
+  .a11y-panel{
+    top:3.8rem!important;
+  }
+}
